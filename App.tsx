@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Satoshi from './components/Satoshi';
+import Satoshi from './constants/Satoshi';
+import { NavigationContainer } from '@react-navigation/native';
 
 import useCachedResources from './hooks/useCachedResources';
+import BottomTabNavigation from './routers/BottomTabNavigation';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -11,10 +13,9 @@ export default function App() {
     return null;
   } else {
     return (
-      <View style={styles.container}>
-        <Satoshi.regular>Open up App.tsx to start working on your app!</Satoshi.regular>
-        <StatusBar style="dark" />
-      </View>
+      <NavigationContainer>
+        <BottomTabNavigation/>
+      </NavigationContainer>
     );
   }
 }
