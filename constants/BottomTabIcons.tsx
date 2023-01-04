@@ -1,10 +1,8 @@
 import Svg, { G, Path, Defs, ClipPath } from 'react-native-svg';
-import Colors from './colors';
 
 type props = {
     focused: boolean;
     color: string;
-    size: number;
 };
 
 //                    stroke={`${props.focused === true ? Colors.greyBackground : Colors.text}`}
@@ -12,9 +10,9 @@ type props = {
 const BottomTabIcons = {
     Map: (props: props) => {
         return (
-            <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
+            <Svg width={22} height={20} fill="none">
                 <Path
-                    d="M6.667 15L.833 18.333V5l5.834-3.333m0 13.333l6.666 3.333M6.667 15V1.667m6.666 16.666L19.167 15V1.667L13.333 5m0 13.333V5m0 0L6.667 1.667"
+                    d="M7.3 15.4 1 19V4.6L7.3 1m0 14.4 7.2 3.6m-7.2-3.6V1m7.2 18 6.3-3.6V1l-6.3 3.6m0 14.4V4.6m0 0L7.3 1"
                     stroke={props.color}
                     strokeWidth={2}
                     strokeLinecap="round"
@@ -25,17 +23,17 @@ const BottomTabIcons = {
     },
     Compass: (props: props) => {
         return (
-            <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
+            <Svg width={20} height={20} fill="none">
                 <Path
-                    d="M10 18.333a8.333 8.333 0 100-16.666 8.333 8.333 0 000 16.666z"
-                    stroke={props.color}                    
+                    d="M10 19a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"
+                    stroke={props.color}
                     strokeWidth={2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
                 />
                 <Path
-                    d="M13.533 6.467l-1.766 5.3-5.3 1.766 1.766-5.3 5.3-1.766z"
-                    stroke={props.color}                    
+                    d="m13.816 6.184-1.908 5.724-5.724 1.908 1.908-5.724 5.724-1.908Z"
+                    stroke={props.color}
                     strokeWidth={2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -58,9 +56,9 @@ const BottomTabIcons = {
     },
     Library: (props: props) => {
         return (
-            <Svg width={19} height={19} viewBox="0 0 19 19" fill="none">
+            <Svg width={20} height={20} fill="none">
                 <Path
-                    d="M1 1v16.67M5.903 1v16.67m4.903 0h6.864V3.942L10.806 1v16.67z"
+                    d="M1 1v18M6.294 1v18m5.294 0H19V4.176L11.588 1v18Z"
                     stroke={props.color}
                     strokeWidth={2}
                     strokeLinecap="round"
@@ -71,9 +69,9 @@ const BottomTabIcons = {
     },
     User: (props: props) => {
         return (
-            <Svg width={16} height={18} viewBox="0 0 16 18" fill="none">
+            <Svg width={18} height={20} fill="none">
                 <Path
-                    d="M14.667 16.5v-1.667a3.333 3.333 0 00-3.334-3.333H4.667a3.333 3.333 0 00-3.334 3.333V16.5m10-11.667a3.333 3.333 0 11-6.666 0 3.333 3.333 0 016.666 0z"
+                    d="M17 19v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M13 5a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
                     stroke={props.color}
                     strokeWidth={2}
                     strokeLinecap="round"

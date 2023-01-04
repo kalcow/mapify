@@ -1,14 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Colors from '../constants/colors';
+import Colors from '../constants/Colors';
 import Satoshi from '../constants/Satoshi';
 
 
 export default function Library() {
     return (
         <View style={styles.container}>
-            <Satoshi.Regular>Library</Satoshi.Regular>
-            <StatusBar style="dark" />
+            <Satoshi.Regular style={{color: 'white'}}>Library</Satoshi.Regular>
         </View>
     )
 }

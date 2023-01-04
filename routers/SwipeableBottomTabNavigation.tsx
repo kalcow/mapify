@@ -1,19 +1,20 @@
-import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, LayoutAnimation, Animated } from 'react-native';
 import React, { FC } from 'react';
+import {
+    createMaterialTopTabNavigator,
+    MaterialTopTabBarProps,
+} from '@react-navigation/material-top-tabs';
 import * as Animatable from 'react-native-animatable';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { TabActions } from '@react-navigation/native';
 import BottomTabIcons from '../constants/BottomTabIcons';
 import Colors from '../constants/Colors';
+import Satoshi from '../constants/Satoshi';
 
 //* Screens
 import Home from '../screens/Home';
 import Map from '../screens/Map';
 import Library from '../screens/Library';
 import Discover from '../screens/Discover';
-
-//* Imports for Types
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs/lib/typescript/src/types';
-import Satoshi from '../constants/Satoshi';
 
 const TabData = [
     { route: 'Map', label: 'Map', icon: BottomTabIcons.Map, component: Map },
@@ -23,17 +24,23 @@ const TabData = [
     { route: 'You', label: 'You', icon: BottomTabIcons.User, component: Library },
 ];
 
-const Tabs = createBottomTabNavigator();
+const Tabs = createMaterialTopTabNavigator();
 
-const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets }) => {
-    // const render = BottomTabIcons.Map;
+const TabBar: FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation, position }) => {
+    LayoutAnimation.configureNext({
+        duration: 300,
+        create: { type: 'linear', property: 'opacity' },
+        update: { type: 'easeOut' },
+        delete: { type: 'linear', property: 'opacity' },
+    });
+    // LayoutAnimation.easeInEaseOut()
     return (
         <View
             style={{
                 ...styles.wrapper,
-                bottom: insets.bottom - 10,
-                left: insets.left,
-                right: insets.right,
+                // bottom: insets.bottom - 10,
+                // left: insets.left,
+                // right: insets.right,
             }}>
             <View style={styles.songContainer}>
                 <Satoshi.Bold style={styles.text}>Spotify Here</Satoshi.Bold>
@@ -61,10 +68,13 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                         });
 
                         if (!isFocused && !event.defaultPrevented) {
-                            LayoutAnimation.easeInEaseOut();
-                            navigation.navigate(route.name);
+                            // LayoutAnimation.easeInEaseOut();
+                            navigation.dispatch(TabActions.jumpTo(route.name));
+                            // navigation.navigate(route.name, { merge: true });
                         }
                     };
+
+                    
 
                     const onLongPress = () => {
                         navigation.emit({
@@ -73,7 +83,18 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                         });
                     };
 
-                    if (isFocused) {
+                    const inputRange = state.routes.map((_, i) => i);
+                    const opacity = position.interpolate({
+                        inputRange,
+                        outputRange: inputRange.map((i) => (i === index ? 1 : 0)),
+                    });
+
+                    const antiOpacity = position.interpolate({
+                        inputRange,
+                        outputRange: inputRange.map((i) => (i === index ? 0 : 0.8)),
+                    });
+
+                    if (state.index === index) {
                         return (
                             <TouchableOpacity
                                 accessibilityRole="button"
@@ -82,13 +103,15 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                                 testID={options.tabBarTestID}
                                 onPress={onPress}
                                 onLongPress={onLongPress}
-                                key={index}
-                                style={styles.activeTab}>
+                                style={styles.activeTab}
+                                key={index}>
+                                <Animated.View
+                                    style={{ ...styles.activeBackground, opacity: opacity }}
+                                />
                                 {renderIcon !== undefined &&
                                     renderIcon({
                                         focused: isFocused,
                                         color: Colors.greyBackground,
-                                        size: 0,
                                     })}
                                 <Satoshi.Bold style={{ ...styles.text, ...styles.activeText }}>
                                     {typeof label === 'string' ? label : ''}
@@ -105,11 +128,19 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                             testID={options.tabBarTestID}
                             onPress={onPress}
                             onLongPress={onLongPress}
+                            style={styles.inactiveTab}
                             key={index}>
-                            <View style={styles.inactiveIcon}>
+                            <Animated.View style={{ ...styles.inactiveBackground, opacity }}>
                                 {renderIcon !== undefined &&
-                                    renderIcon({ focused: isFocused, color: Colors.text, size: 0 })}
-                            </View>
+                                    renderIcon({
+                                        focused: isFocused,
+                                        color: Colors.greyBackground,
+                                    })}
+                            </Animated.View>
+                            <Animated.View style={{ ...styles.inactiveIcon, opacity: antiOpacity }}>
+                                {renderIcon !== undefined &&
+                                    renderIcon({ focused: isFocused, color: Colors.text })}
+                            </Animated.View>
                         </TouchableOpacity>
                     );
                 })}
@@ -117,6 +148,7 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -127,6 +159,9 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
+        bottom: 30,
+        left: 0,
+        right: 0,
     },
     text: {
         color: Colors.text,
@@ -152,10 +187,44 @@ const styles = StyleSheet.create({
     },
     activeTab: {
         flexDirection: 'row',
-        backgroundColor: Colors.text,
+        // backgroundColor: Colors.text,
         paddingHorizontal: 12,
         borderRadius: 30,
         height: 34,
+        alignItems: 'center',
+        position: 'relative',
+    },
+    inactiveTab: {
+        flexDirection: 'row',
+        // backgroundColor: Colors.text,
+        paddingHorizontal: 5,
+        borderRadius: 30,
+        height: 34,
+        alignItems: 'center',
+        position: 'relative',
+    },
+    activeBackground: {
+        position: 'absolute',
+        backgroundColor: Colors.text,
+        height: '100%',
+        flex: 1,
+        borderRadius: 30,
+        bottom: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+    },
+    inactiveBackground: {
+        position: 'absolute',
+        backgroundColor: Colors.text,
+        height: '100%',
+        flex: 1,
+        borderRadius: 30,
+        bottom: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     inactiveIcon: {
@@ -166,14 +235,9 @@ const styles = StyleSheet.create({
     },
 });
 
-const BottomTabNavigation = () => {
+const SwipeableBottomTabNavigation = () => {
     return (
-        <Tabs.Navigator
-            screenOptions={{
-                headerShown: false,
-            }}
-			initialRouteName="Home"
-            tabBar={(props) => <TabBar {...props} />}>
+        <Tabs.Navigator tabBarPosition="bottom" initialRouteName="Home" tabBar={(props) => <TabBar {...props} />} screenOptions={{tabBarIndicatorStyle: {position: 'absolute', backgroundColor: 'red', top: 0, bottom: 0, left: 0, right: 0}}}>
             {TabData.map((Item, index) => {
                 return (
                     <Tabs.Screen
@@ -190,4 +254,4 @@ const BottomTabNavigation = () => {
     );
 };
 
-export default BottomTabNavigation;
+export default SwipeableBottomTabNavigation;
