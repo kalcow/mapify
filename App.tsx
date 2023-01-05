@@ -13,7 +13,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const useSwipeableBottomTabs = true; 
+const useSwipeableBottomTabs = !true; 
 
 export default function App() {
     const isLoadingComplete = useCachedResources();

@@ -1,6 +1,15 @@
 import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from 'react-native';
 import React, { FC } from 'react';
-import * as Animatable from 'react-native-animatable';
+import Animated, {
+    FadeIn,
+    Layout,
+    ZoomIn,
+    ZoomOut,
+    Easing,
+    FadeOut,
+    SlideInLeft,
+    SlideOutLeft,
+} from 'react-native-reanimated';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomTabIcons from '../constants/BottomTabIcons';
 import Colors from '../constants/Colors';
@@ -14,6 +23,7 @@ import Discover from '../screens/Discover';
 //* Imports for Types
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs/lib/typescript/src/types';
 import Satoshi from '../constants/Satoshi';
+// import Animated from 'react-native-reanimated';
 
 const TabData = [
     { route: 'Map', label: 'Map', icon: BottomTabIcons.Map, component: Map },
@@ -37,7 +47,6 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
             }}>
             <View style={styles.songContainer}>
                 <Satoshi.Bold style={styles.text}>Spotify Here</Satoshi.Bold>
-                {/* {render({ focused: true, color: 'red', size: 12 })} */}
             </View>
             <View style={styles.tabsContainer}>
                 {state.routes.map((route, index) => {
@@ -61,7 +70,6 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                         });
 
                         if (!isFocused && !event.defaultPrevented) {
-                            LayoutAnimation.easeInEaseOut();
                             navigation.navigate(route.name);
                         }
                     };
@@ -73,8 +81,8 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                         });
                     };
 
-                    if (isFocused) {
-                        return (
+                    return (
+                        <Animated.View layout={Layout.duration(200)} key={index}>
                             <TouchableOpacity
                                 accessibilityRole="button"
                                 accessibilityState={isFocused ? { selected: true } : {}}
@@ -84,33 +92,58 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                                 onLongPress={onLongPress}
                                 key={index}
                                 style={styles.activeTab}>
-                                {renderIcon !== undefined &&
-                                    renderIcon({
-                                        focused: isFocused,
-                                        color: Colors.greyBackground,
-                                        size: 0,
-                                    })}
-                                <Satoshi.Bold style={{ ...styles.text, ...styles.activeText }}>
-                                    {typeof label === 'string' ? label : ''}
-                                </Satoshi.Bold>
+                                {isFocused && (
+                                    <Animated.View
+                                        style={styles.activeBackground}
+                                        entering={SlideInLeft.duration(300).easing(
+                                            Easing.inOut(Easing.ease)
+                                        )}
+                                        // exiting={ZoomOut.duration(200)}
+                                    />
+                                )}
+                                {isFocused && (
+                                    <Animated.View
+                                        entering={FadeIn.duration(200).easing(
+                                            Easing.inOut(Easing.ease)
+                                        )}
+                                        exiting={FadeOut.duration(200)}>
+                                        {renderIcon !== undefined &&
+                                            renderIcon({
+                                                focused: isFocused,
+                                                color: Colors.greyBackground,
+                                                size: 0,
+                                            })}
+                                    </Animated.View>
+                                )}
+                                {!isFocused && (
+                                    <Animated.View
+									entering={FadeIn.duration(400).easing(
+										Easing.inOut(Easing.ease)
+									)}
+									exiting={FadeOut.duration(200)}>
+                                        {renderIcon !== undefined &&
+                                            renderIcon({
+                                                focused: isFocused,
+                                                color: Colors.text,
+                                                size: 0,
+                                            })}
+                                    </Animated.View>
+                                )}
+                                {isFocused && (
+                                    <Animated.View
+                                        entering={ZoomIn.duration(400).easing(
+                                            Easing.inOut(Easing.ease)
+                                        )}
+                                        exiting={ZoomOut.duration(200)}
+                                    >
+                                        <Satoshi.Bold
+                                            style={{ ...styles.text, ...styles.activeText }}>
+                                            {typeof label === 'string' ? label : ''}
+                                        </Satoshi.Bold>
+                                    </Animated.View>
+                                )}
                             </TouchableOpacity>
-                        );
-                    }
-
-                    return (
-                        <TouchableOpacity
-                            accessibilityRole="button"
-                            accessibilityState={isFocused ? { selected: true } : {}}
-                            accessibilityLabel={options.tabBarAccessibilityLabel}
-                            testID={options.tabBarTestID}
-                            onPress={onPress}
-                            onLongPress={onLongPress}
-                            key={index}>
-                            <View style={styles.inactiveIcon}>
-                                {renderIcon !== undefined &&
-                                    renderIcon({ focused: isFocused, color: Colors.text, size: 0 })}
-                            </View>
-                        </TouchableOpacity>
+                        </Animated.View>
                     );
                 })}
             </View>
@@ -150,19 +183,26 @@ const styles = StyleSheet.create({
         color: Colors.greyBackground,
         paddingLeft: 8,
     },
+    activeBackground: {
+        position: 'absolute',
+        backgroundColor: Colors.text,
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '100%',
+        borderRadius: 30,
+        alignSelf: 'stretch',
+    },
     activeTab: {
         flexDirection: 'row',
-        backgroundColor: Colors.text,
         paddingHorizontal: 12,
         borderRadius: 30,
         height: 34,
         alignItems: 'center',
-    },
-    inactiveIcon: {
-        width: 34,
-        height: 34,
-        justifyContent: 'center',
-        alignItems: 'center',
+        position: 'relative',
+        flex: 1,
+        overflow: 'hidden',
     },
 });
 
@@ -172,7 +212,7 @@ const BottomTabNavigation = () => {
             screenOptions={{
                 headerShown: false,
             }}
-			initialRouteName="Home"
+            initialRouteName="Home"
             tabBar={(props) => <TabBar {...props} />}>
             {TabData.map((Item, index) => {
                 return (

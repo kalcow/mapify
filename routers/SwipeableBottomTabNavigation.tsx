@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, LayoutAnimation, Animated } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated as _Animated } from 'react-native';
 import React, { FC } from 'react';
 import {
     createMaterialTopTabNavigator,
@@ -9,6 +9,18 @@ import { TabActions } from '@react-navigation/native';
 import BottomTabIcons from '../constants/BottomTabIcons';
 import Colors from '../constants/Colors';
 import Satoshi from '../constants/Satoshi';
+
+import Animated, {
+    FadeIn,
+    Layout,
+    ZoomIn,
+    ZoomOut,
+    Easing,
+    FadeOut,
+    SlideInLeft,
+    SlideOutLeft,
+    SlideOutRight,
+} from 'react-native-reanimated';
 
 //* Screens
 import Home from '../screens/Home';
@@ -27,12 +39,12 @@ const TabData = [
 const Tabs = createMaterialTopTabNavigator();
 
 const TabBar: FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation, position }) => {
-    LayoutAnimation.configureNext({
-        duration: 300,
-        create: { type: 'linear', property: 'opacity' },
-        update: { type: 'easeOut' },
-        delete: { type: 'linear', property: 'opacity' },
-    });
+    // LayoutAnimation.configureNext({
+    //     duration: 300,
+    //     create: { type: 'linear', property: 'opacity' },
+    //     update: { type: 'easeOut' },
+    //     delete: { type: 'linear', property: 'opacity' },
+    // });
     // LayoutAnimation.easeInEaseOut()
     return (
         <View
@@ -74,8 +86,6 @@ const TabBar: FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation, po
                         }
                     };
 
-                    
-
                     const onLongPress = () => {
                         navigation.emit({
                             type: 'tabLongPress',
@@ -86,16 +96,16 @@ const TabBar: FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation, po
                     const inputRange = state.routes.map((_, i) => i);
                     const opacity = position.interpolate({
                         inputRange,
-                        outputRange: inputRange.map((i) => (i === index ? 1 : 0)),
+                        outputRange: inputRange.map((i) => (i === index ? 0.5 : 0)),
                     });
 
-                    const antiOpacity = position.interpolate({
-                        inputRange,
-                        outputRange: inputRange.map((i) => (i === index ? 0 : 0.8)),
-                    });
-
-                    if (state.index === index) {
-                        return (
+                    return (
+                        <Animated.View layout={Layout.duration(200)} key={index}>
+                            <_Animated.View
+                                style={{
+                                    ...styles.intentBlock,
+                                    opacity: opacity,
+                                }}></_Animated.View>
                             <TouchableOpacity
                                 accessibilityRole="button"
                                 accessibilityState={isFocused ? { selected: true } : {}}
@@ -103,52 +113,65 @@ const TabBar: FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation, po
                                 testID={options.tabBarTestID}
                                 onPress={onPress}
                                 onLongPress={onLongPress}
-                                style={styles.activeTab}
-                                key={index}>
-                                <Animated.View
-                                    style={{ ...styles.activeBackground, opacity: opacity }}
-                                />
-                                {renderIcon !== undefined &&
-                                    renderIcon({
-                                        focused: isFocused,
-                                        color: Colors.greyBackground,
-                                    })}
-                                <Satoshi.Bold style={{ ...styles.text, ...styles.activeText }}>
-                                    {typeof label === 'string' ? label : ''}
-                                </Satoshi.Bold>
+                                key={index}
+                                style={styles.activeTab}>
+                                {isFocused && (
+                                    <Animated.View
+                                        style={styles.activeBackground}
+                                        entering={SlideInLeft.duration(300).easing(
+                                            Easing.inOut(Easing.ease)
+                                        )}
+                                        exiting={FadeOut.duration(200)}
+                                    />
+                                )}
+                                <View>
+                                    {isFocused && (
+                                        <Animated.View
+                                            entering={FadeIn.duration(200).easing(
+                                                Easing.inOut(Easing.ease)
+                                            )}
+                                            exiting={FadeOut.duration(200)}>
+                                            {renderIcon !== undefined &&
+                                                renderIcon({
+                                                    focused: isFocused,
+                                                    color: Colors.greyBackground,
+                                                })}
+                                        </Animated.View>
+                                    )}
+                                    {!isFocused && (
+                                        <Animated.View
+                                            entering={FadeIn.duration(400).easing(
+                                                Easing.inOut(Easing.ease)
+                                            )}
+                                            exiting={FadeOut.duration(200)}>
+                                            {renderIcon !== undefined &&
+                                                renderIcon({
+                                                    focused: isFocused,
+                                                    color: Colors.text,
+                                                })}
+                                        </Animated.View>
+                                    )}
+                                </View>
+                                {isFocused && (
+                                    <Animated.View
+                                        entering={ZoomIn.duration(500).easing(
+                                            Easing.inOut(Easing.ease)
+                                        )}
+                                        exiting={ZoomOut.duration(200)}>
+                                        <Satoshi.Bold
+                                            style={{ ...styles.text, ...styles.activeText }}>
+                                            {typeof label === 'string' ? label : ''}
+                                        </Satoshi.Bold>
+                                    </Animated.View>
+                                )}
                             </TouchableOpacity>
-                        );
-                    }
-
-                    return (
-                        <TouchableOpacity
-                            accessibilityRole="button"
-                            accessibilityState={isFocused ? { selected: true } : {}}
-                            accessibilityLabel={options.tabBarAccessibilityLabel}
-                            testID={options.tabBarTestID}
-                            onPress={onPress}
-                            onLongPress={onLongPress}
-                            style={styles.inactiveTab}
-                            key={index}>
-                            <Animated.View style={{ ...styles.inactiveBackground, opacity }}>
-                                {renderIcon !== undefined &&
-                                    renderIcon({
-                                        focused: isFocused,
-                                        color: Colors.greyBackground,
-                                    })}
-                            </Animated.View>
-                            <Animated.View style={{ ...styles.inactiveIcon, opacity: antiOpacity }}>
-                                {renderIcon !== undefined &&
-                                    renderIcon({ focused: isFocused, color: Colors.text })}
-                            </Animated.View>
-                        </TouchableOpacity>
+                        </Animated.View>
                     );
                 })}
             </View>
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -180,64 +203,61 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
         marginBottom: 10,
+        overflow: 'hidden'
+    },
+    intentBlock: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 34,
+        borderRadius: 30,
+        backgroundColor: Colors.text,
     },
     activeText: {
         color: Colors.greyBackground,
         paddingLeft: 8,
     },
+    activeBackground: {
+        position: 'absolute',
+        backgroundColor: Colors.text,
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: '100%',
+        borderRadius: 30,
+        alignSelf: 'stretch',
+    },
     activeTab: {
         flexDirection: 'row',
-        // backgroundColor: Colors.text,
         paddingHorizontal: 12,
         borderRadius: 30,
         height: 34,
         alignItems: 'center',
         position: 'relative',
-    },
-    inactiveTab: {
-        flexDirection: 'row',
-        // backgroundColor: Colors.text,
-        paddingHorizontal: 5,
-        borderRadius: 30,
-        height: 34,
-        alignItems: 'center',
-        position: 'relative',
-    },
-    activeBackground: {
-        position: 'absolute',
-        backgroundColor: Colors.text,
-        height: '100%',
         flex: 1,
-        borderRadius: 30,
-        bottom: 0,
-        top: 0,
-        left: 0,
-        right: 0,
-    },
-    inactiveBackground: {
-        position: 'absolute',
-        backgroundColor: Colors.text,
-        height: '100%',
-        flex: 1,
-        borderRadius: 30,
-        bottom: 0,
-        top: 0,
-        left: 0,
-        right: 0,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    inactiveIcon: {
-        width: 34,
-        height: 34,
-        justifyContent: 'center',
-        alignItems: 'center',
+        overflow: 'hidden',
     },
 });
 
 const SwipeableBottomTabNavigation = () => {
     return (
-        <Tabs.Navigator tabBarPosition="bottom" initialRouteName="Home" tabBar={(props) => <TabBar {...props} />} screenOptions={{tabBarIndicatorStyle: {position: 'absolute', backgroundColor: 'red', top: 0, bottom: 0, left: 0, right: 0}}}>
+        <Tabs.Navigator
+            tabBarPosition="bottom"
+            initialRouteName="Home"
+            tabBar={(props) => <TabBar {...props} />}
+            screenOptions={{
+                tabBarIndicatorStyle: {
+                    position: 'absolute',
+                    backgroundColor: 'red',
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                },
+            }}>
             {TabData.map((Item, index) => {
                 return (
                     <Tabs.Screen
