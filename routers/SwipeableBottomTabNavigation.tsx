@@ -39,24 +39,13 @@ const TabData = [
 const Tabs = createMaterialTopTabNavigator();
 
 const TabBar: FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation, position }) => {
-    // LayoutAnimation.configureNext({
-    //     duration: 300,
-    //     create: { type: 'linear', property: 'opacity' },
-    //     update: { type: 'easeOut' },
-    //     delete: { type: 'linear', property: 'opacity' },
-    // });
-    // LayoutAnimation.easeInEaseOut()
     return (
         <View
             style={{
                 ...styles.wrapper,
-                // bottom: insets.bottom - 10,
-                // left: insets.left,
-                // right: insets.right,
             }}>
             <View style={styles.songContainer}>
                 <Satoshi.Bold style={styles.text}>Spotify Here</Satoshi.Bold>
-                {/* {render({ focused: true, color: 'red', size: 12 })} */}
             </View>
             <View style={styles.tabsContainer}>
                 {state.routes.map((route, index) => {
@@ -80,9 +69,7 @@ const TabBar: FC<MaterialTopTabBarProps> = ({ state, descriptors, navigation, po
                         });
 
                         if (!isFocused && !event.defaultPrevented) {
-                            // LayoutAnimation.easeInEaseOut();
-                            navigation.dispatch(TabActions.jumpTo(route.name));
-                            // navigation.navigate(route.name, { merge: true });
+                            navigation.navigate(route.name, { merge: true });
                         }
                     };
 
