@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, LayoutAnimation } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { FC } from 'react';
 import Animated, {
     FadeIn,
@@ -8,7 +8,6 @@ import Animated, {
     Easing,
     FadeOut,
     SlideInLeft,
-    SlideOutLeft,
 } from 'react-native-reanimated';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomTabIcons from '../constants/BottomTabIcons';
@@ -23,7 +22,7 @@ import Discover from '../screens/Discover';
 //* Imports for Types
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs/lib/typescript/src/types';
 import Satoshi from '../constants/Satoshi';
-// import Animated from 'react-native-reanimated';
+import CurrentlyPlaying from '../components/CurrentlyPlaying';
 
 const TabData = [
     { route: 'Map', label: 'Map', icon: BottomTabIcons.Map, component: Map },
@@ -36,7 +35,6 @@ const TabData = [
 const Tabs = createBottomTabNavigator();
 
 const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets }) => {
-    // const render = BottomTabIcons.Map;
     return (
         <View
             style={{
@@ -46,7 +44,7 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                 right: insets.right,
             }}>
             <View style={styles.songContainer}>
-                <Satoshi.Bold style={styles.text}>Spotify Here</Satoshi.Bold>
+                <CurrentlyPlaying/>
             </View>
             <View style={styles.tabsContainer}>
                 {state.routes.map((route, index) => {
@@ -169,6 +167,7 @@ const styles = StyleSheet.create({
         height: 72,
         justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 7, 
     },
     tabsContainer: {
         width: '100%',

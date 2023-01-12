@@ -4,8 +4,6 @@ import {
     createMaterialTopTabNavigator,
     MaterialTopTabBarProps,
 } from '@react-navigation/material-top-tabs';
-import * as Animatable from 'react-native-animatable';
-import { TabActions } from '@react-navigation/native';
 import BottomTabIcons from '../constants/BottomTabIcons';
 import Colors from '../constants/Colors';
 import Satoshi from '../constants/Satoshi';
@@ -18,8 +16,6 @@ import Animated, {
     Easing,
     FadeOut,
     SlideInLeft,
-    SlideOutLeft,
-    SlideOutRight,
 } from 'react-native-reanimated';
 
 //* Screens
