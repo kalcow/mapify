@@ -27,9 +27,8 @@ const InitialFlow = () => {
                 // console.log(data);
                 if (data.data.session !== null) {
                     setInitialRoute('HomeTabs');
-                    setLoading(false);
-                    // setTimeout(() => setLoading(false), 3000);
                 }
+                setTimeout(() => setLoading(false), 1000);
             })
             .catch((error) => {
                 console.log(error);
