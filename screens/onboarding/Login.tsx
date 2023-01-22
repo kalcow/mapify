@@ -31,15 +31,14 @@ const Login = (props: Props) => {
                     'user-read-email',
                     'playlist-read-private',
                     'user-read-currently-playing',
+                    'user-read-playback-state', 
+                    'user-modify-playback-state', 
                 ].join(' '),
             },
         };
 
-        console.log(returnUrl);
 
         const authUrl = (await supabase.auth.signInWithOAuth(signInParameters)).data.url;
-
-        console.log(returnUrl);  
 
         if (authUrl !== null) {
             const response = await startAsync({ authUrl, returnUrl });
@@ -47,15 +46,18 @@ const Login = (props: Props) => {
                 await Linking.openURL(response.url);
             }
 
+            //@ts-ignore
             if (!response || !response.params?.refresh_token) {
                 return;
             }
 
             console.log("response", response); 
 
+            //@ts-ignore
             await AsyncStorage.setItem('@spotify_refresh_token', response.params?.provider_refresh_token)
 
             const { data, error } = await supabase.auth.refreshSession({
+                //@ts-ignore
                 refresh_token: response.params.refresh_token,
             });
 

@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
         marginBottom: 10,
-        overflow: 'hidden'
+        overflow: 'hidden',
     },
     intentBlock: {
         position: 'absolute',

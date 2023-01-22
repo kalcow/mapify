@@ -16,3 +16,4 @@ web-build/
 #supabase
 supabase/supabaseConstants.ts
 supabase/supabase-keys.ts
+lib/spotify-keys.ts

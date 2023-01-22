@@ -44,3 +44,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
 });
+
+/**
+ * int hello = 0;
+ * const hello = 0;
+ * const hello: number = 0;
+ * const button: FC<>
+ */
