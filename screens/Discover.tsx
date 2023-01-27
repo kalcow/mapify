@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import Globe from '../components/Globe';
 import Colors from '../constants/Colors';
 import Satoshi from '../constants/Satoshi';
 
@@ -7,7 +8,7 @@ import Satoshi from '../constants/Satoshi';
 export default function Discover() {
     return (
         <View style={styles.container}>
-            <Satoshi.Regular style={{color: 'white'}}>Discover</Satoshi.Regular>
+            <Globe/> 
         </View>
     )
 }

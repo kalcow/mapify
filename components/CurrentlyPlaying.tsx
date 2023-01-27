@@ -1,5 +1,5 @@
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import React, { FC, useEffect } from 'react';
+import { View, StyleSheet, Modal, Image, TouchableOpacity, Pressable } from 'react-native';
+import React, { FC, useEffect, useState } from 'react';
 import Satoshi from '../constants/Satoshi';
 import Colors from '../constants/Colors';
 import useSWR from 'swr';
@@ -7,6 +7,7 @@ import { useUserState } from '../context/user';
 import ms_to_string from '../lib/ms_to_string';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
+import SpotifyActions from '../lib/spotify';
 
 const API_ENDPOINT = 'https://mapify-api-service.onrender.com/player';
 
@@ -18,12 +19,35 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
         fetch(url, { headers: { refresh_token: u.refreshToken!.spotify } }).then((r) => r.json());
     const { data, error } = useSWR(API_ENDPOINT, fetcher, { refreshInterval: 1000 });
     const w = useSharedValue(0);
+    const [playState, setPlayState] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [dominantColor, setDominantColor] = useState("rgb(0, 0, 0)");
 
     useEffect(() => {
         if (data !== undefined && data.player_available) {
             w.value = (data.progress_ms / data.item.duration_ms) * 100;
+            setPlayState(data.is_playing);
         }
     }, [data]);
+
+    useEffect(() => {
+        if (data !== undefined && data.player_available) {
+            let img = document.createElement('img');
+        }
+
+        // let img = document.createElement('img');
+        // img.crossOrigin = "";
+        // img.src = data?.isPlaying ? data?.albumImageUrl : recentlyPlayed.data?.items[0].albumImageUrl;
+        // fac.getColorAsync(img, { algorithm: 'dominant' })
+        //     .then(color => {
+        //         setDominantColor(color.hex);
+        //         // setIsLight(color.isLight);
+        //         // console.log(color)
+        //     })
+        //     .catch(e => {
+        //         console.error(e);
+        //     });
+    }, [data])
 
     const animatedWidth = useAnimatedStyle(() => {
         return {
@@ -51,51 +75,44 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
         );
     }
 
-    const pause = async () => {
-        console.log('hello')
-        // const data = {
-        //     grant_type: 'refresh_token',
-        //     refresh_token: u.refreshToken!.spotify,
-        // };
-        // axios
-        //     .post(TOKEN_ENDPOINT, data, {
-        //         headers: {
-        //             Authorization: `Basic ${basic}`,
-        //             'Content-Type': 'application/x-www-form-urlencoded',
-        //         },
-        //     })
-        //     .then((response) => {
-        //         const { access_token } = response.data;
-        //         fetch('https://api.spotify.com/v1/me/player/pause', {
-        //             method: 'PUT',
-        //             headers: {
-        //                 Accept: 'application/json',
-        //                 'Content-Type': 'application/json',
-        //                 Authorization: `Bearer ${access_token}`,
-        //             },
-        //         }).then(() => alert('hello'));
-        //     });
-        const response = await fetch('https://mapify-api-service.onrender.com/player', {
-            method: 'get',
-            headers: {
-                refresh_token: u.refreshToken!.spotify,
-            },
-        });
-        // console.log(response);
-        console.log('hello again')
+    const pause = () => {
+        if (playState) {
+            SpotifyActions.pause(u.refreshToken!.spotify).then(() => {
+                console.log('paused');
+                setPlayState(!playState);
+            });
+        } else {
+            SpotifyActions.play(u.refreshToken!.spotify).then(() => {
+                console.log('playing');
+                setPlayState(!playState);
+            });
+        }
     };
 
     const artists: string = data.item.artists.map((_artist: any) => _artist.name).join(', ');
 
     return (
         <View style={styles.wrapper}>
+            <Modal
+                animationType="slide"
+                transparent={false}
+                visible={modalVisible}
+                // presentationStyle={'fullScreen'}
+                onRequestClose={() => {
+                    
+                    setModalVisible(!modalVisible);
+                }}>
+                <View>
+                    <Satoshi.Black>{data.item.name}</Satoshi.Black>
+                </View>
+            </Modal>
             <Image
                 style={{ width: 72, height: 72, borderRadius: 23, marginRight: 11 }}
                 source={{ uri: data.item.album.images[0].url }}
             />
             <View style={styles.textWrapper}>
                 <View style={styles.textContainer}>
-                    <View>
+                    <TouchableOpacity onPress={() => {setModalVisible(!modalVisible)}} >
                         <Satoshi.Bold numberOfLines={1} style={styles.title}>
                             {data.item.name}
                             <Satoshi.Bold style={styles.artists}> • {artists}</Satoshi.Bold>
@@ -113,7 +130,7 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
                                 {data.device.name}
                             </Satoshi.Medium>
                         </View>
-                    </View>
+                    </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.playButton}
                         onPress={() => {

@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
+import Globe from '../components/Globe';
 import Colors from '../constants/Colors';
 import Satoshi from '../constants/Satoshi';
 import { supabase } from '../supabase/supabase';
