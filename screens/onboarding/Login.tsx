@@ -20,7 +20,7 @@ const Login = (props: Props) => {
     const navigator = useNavigation();
     const signInWithSpotify = async () => {
         const returnUrl = makeRedirectUri({
-            useProxy: false,
+            useProxy: true,
         });
         
         const signInParameters = {
@@ -51,7 +51,7 @@ const Login = (props: Props) => {
                 return;
             }
 
-            console.log("response", response); 
+            // console.log("response", response); 
 
             //@ts-ignore
             await AsyncStorage.setItem('@spotify_refresh_token', response.params?.provider_refresh_token)

@@ -27,6 +27,8 @@ PODS:
     - ReactCommon/turbomodule/core
   - ExpoRandom (13.0.0):
     - ExpoModulesCore
+  - ExpoSystemUI (2.0.1):
+    - ExpoModulesCore
   - ExpoWebBrowser (12.0.0):
     - ExpoModulesCore
   - EXSplashScreen (0.17.5):
@@ -413,6 +415,7 @@ DEPENDENCIES:
   - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoRandom (from `../node_modules/expo-random/ios`)
+  - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
   - ExpoWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -491,6 +494,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoRandom:
     :path: "../node_modules/expo-random/ios"
+  ExpoSystemUI:
+    :path: "../node_modules/expo-system-ui/ios"
   ExpoWebBrowser:
     :path: "../node_modules/expo-web-browser/ios"
   EXSplashScreen:
@@ -591,6 +596,7 @@ SPEC CHECKSUMS:
   ExpoLinearGradient: b40c2133ad57ae105b1b12a319e314463c817f6b
   ExpoModulesCore: 089e1ac0f0edee4dd0af0eb4e3f7b44d72cc418d
   ExpoRandom: 58b7e0a5fe1adf1cb6dc1cbe503a6fe9524f36ce
+  ExpoSystemUI: c844dec5e49e677bcd6bfe15cc305b02127b1124
   ExpoWebBrowser: 073e50f16669d498fb49063b9b7fe780b24f7fda
   EXSplashScreen: 3e989924f61a8dd07ee4ea584c6ba14be9b51949
   FBLazyVector: affa4ba1bfdaac110a789192f4d452b053a86624

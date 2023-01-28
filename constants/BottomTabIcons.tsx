@@ -80,6 +80,26 @@ const BottomTabIcons = {
             </Svg>
         );
     },
+    Rooms: (props: props) => {
+        return (
+            <Svg width={20} height={20} fill="none">
+                <Path
+                    d="M17.5 13.333V6.667a1.667 1.667 0 0 0-.833-1.442l-5.834-3.333a1.666 1.666 0 0 0-1.666 0L3.333 5.225A1.667 1.667 0 0 0 2.5 6.667v6.666a1.667 1.667 0 0 0 .833 1.442l5.834 3.333a1.666 1.666 0 0 0 1.666 0l5.834-3.333a1.667 1.667 0 0 0 .833-1.442Z"
+                    stroke={props.color}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+                <Path
+                    d="M2.725 5.8 10 10.008 17.275 5.8M10 18.4V10"
+                    stroke={props.color}
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </Svg>
+        );
+    },
 };
 
 export default BottomTabIcons;

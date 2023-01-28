@@ -1,5 +1,5 @@
 import { View, StyleSheet, Modal, Image, TouchableOpacity, Pressable } from 'react-native';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useRef } from 'react';
 import Satoshi from '../constants/Satoshi';
 import Colors from '../constants/Colors';
 import useSWR from 'swr';
@@ -8,6 +8,8 @@ import ms_to_string from '../lib/ms_to_string';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
+import ImageColors from 'react-native-image-colors';
+import { Modalize } from 'react-native-modalize';
 
 const API_ENDPOINT = 'https://mapify-api-service.onrender.com/player';
 
@@ -21,33 +23,48 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const w = useSharedValue(0);
     const [playState, setPlayState] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const [dominantColor, setDominantColor] = useState("rgb(0, 0, 0)");
+    const [dominantColor, setDominantColor] = useState<string | undefined>('#000');
 
     useEffect(() => {
         if (data !== undefined && data.player_available) {
             w.value = (data.progress_ms / data.item.duration_ms) * 100;
             setPlayState(data.is_playing);
+            const getColors = () => {
+                ImageColors.getColors(data.item.album.images[2].url, {
+                    fallback: Colors.blackBase,
+                    cache: false,
+                    key: 'unique_key',
+                    headers: {
+                        authorization: 'Basic 123',
+                    },
+                }).then((result) => {
+                    // console.log(result);
+                    let primaryColor;
+                    switch (result.platform) {
+                        case 'android':
+                            // android result properties
+                            primaryColor = result.vibrant;
+                            setDominantColor(primaryColor);
+                            break;
+                        case 'web':
+                            // web result properties
+                            primaryColor = result.lightVibrant;
+                            setDominantColor(primaryColor);
+                            break;
+                        case 'ios':
+                            // iOS result properties
+                            primaryColor = result.background;
+                            setDominantColor(primaryColor);
+                            break;
+                        default:
+                            throw new Error('Unexpected platform key');
+                    }
+                });
+            };
+
+            getColors();
         }
     }, [data]);
-
-    useEffect(() => {
-        if (data !== undefined && data.player_available) {
-            let img = document.createElement('img');
-        }
-
-        // let img = document.createElement('img');
-        // img.crossOrigin = "";
-        // img.src = data?.isPlaying ? data?.albumImageUrl : recentlyPlayed.data?.items[0].albumImageUrl;
-        // fac.getColorAsync(img, { algorithm: 'dominant' })
-        //     .then(color => {
-        //         setDominantColor(color.hex);
-        //         // setIsLight(color.isLight);
-        //         // console.log(color)
-        //     })
-        //     .catch(e => {
-        //         console.error(e);
-        //     });
-    }, [data])
 
     const animatedWidth = useAnimatedStyle(() => {
         return {
@@ -97,12 +114,11 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
                 animationType="slide"
                 transparent={false}
                 visible={modalVisible}
-                // presentationStyle={'fullScreen'}
                 onRequestClose={() => {
-                    
                     setModalVisible(!modalVisible);
                 }}>
-                <View>
+                <View style={styles.ModalWrapper}>
+                    <View style={[styles.colorBlock, { backgroundColor: dominantColor }]} />
                     <Satoshi.Black>{data.item.name}</Satoshi.Black>
                 </View>
             </Modal>
@@ -112,7 +128,10 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
             />
             <View style={styles.textWrapper}>
                 <View style={styles.textContainer}>
-                    <TouchableOpacity onPress={() => {setModalVisible(!modalVisible)}} >
+                    <TouchableOpacity
+                        onPress={() => {
+                            setModalVisible(!modalVisible);
+                        }}>
                         <Satoshi.Bold numberOfLines={1} style={styles.title}>
                             {data.item.name}
                             <Satoshi.Bold style={styles.artists}> • {artists}</Satoshi.Bold>
@@ -228,5 +247,22 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingTop: 2,
+    },
+
+    //modal
+
+    ModalWrapper: {
+        flex: 1,
+        backgroundColor: Colors.blackBase,
+    },
+
+    colorBlock: {
+        height: '20%',
+        width: '100%',
+        backgroundColor: 'white',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
     },
 });

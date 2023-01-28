@@ -29,7 +29,7 @@ const TabData = [
     { route: 'Discover', label: 'Discover', icon: BottomTabIcons.Compass, component: Discover },
     { route: 'Home', label: 'Home', icon: BottomTabIcons.Home, component: Home },
     { route: 'Library', label: 'Library', icon: BottomTabIcons.Library, component: Library },
-    { route: 'You', label: 'You', icon: BottomTabIcons.User, component: Library },
+    { route: 'Rooms', label: 'Rooms', icon: BottomTabIcons.Rooms, component: Library },
 ];
 
 const Tabs = createBottomTabNavigator();
