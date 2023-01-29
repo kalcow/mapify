@@ -25,6 +25,10 @@ lib/spotify-keys.ts
 #
 .DS_Store
 
+#ios and android folders
+/ios
+/android
+
 # Xcode
 #
 build/
@@ -79,3 +83,4 @@ web-build/
 dist/
 
 # @end expo-cli
+lib/spotify-keys.tsx
