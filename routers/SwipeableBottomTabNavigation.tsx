@@ -5,7 +5,7 @@ import {
     MaterialTopTabBarProps,
 } from '@react-navigation/material-top-tabs';
 import BottomTabIcons from '../constants/BottomTabIcons';
-import Colors from '../constants/Colors';
+import Colors from '../constants/colors';
 import Satoshi from '../constants/Satoshi';
 
 import Animated, {

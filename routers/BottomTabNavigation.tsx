@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import BottomTabIcons from '../constants/BottomTabIcons';
-import Colors from '../constants/Colors';
+import Colors from '../constants/colors';
 
 //* Screens
 import Home from '../screens/Home';

@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../components/Button';
 import Globe from '../components/Globe';
-import Colors from '../constants/Colors';
+import Colors from '../constants/colors';
 import Satoshi from '../constants/Satoshi';
 import { supabase } from '../supabase/supabase';
 

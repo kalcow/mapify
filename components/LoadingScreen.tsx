@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React, { useRef } from 'react';
-import Colors from '../constants/Colors';
+import Colors from '../constants/colors';
 import LottieView from 'lottie-react-native';
 
 function LoadingScreen() {

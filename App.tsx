@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import useCachedResources from './hooks/useCachedResources';
 import DarkTheme from './constants/Theme';
-import Colors from './constants/Colors';
+import Colors from './constants/colors';
 import InitialFlow from './routers/InitialFlow';
 import BottomTabNavigation from './routers/BottomTabNavigation';
 import UserWrapper from './context/user';

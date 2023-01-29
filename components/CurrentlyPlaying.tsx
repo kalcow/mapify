@@ -1,7 +1,7 @@
 import { View, StyleSheet, Modal, Image, TouchableOpacity, Pressable } from 'react-native';
 import React, { FC, useEffect, useState, useRef } from 'react';
 import Satoshi from '../constants/Satoshi';
-import Colors from '../constants/Colors';
+import Colors from '../constants/colors';
 import useSWR from 'swr';
 import { useUserState } from '../context/user';
 import ms_to_string from '../lib/ms_to_string';

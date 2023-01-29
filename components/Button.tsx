@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ViewStyle, StyleProp } from 'react-native';
 import React, { Children, FC, ReactNode } from 'react';
 import Satoshi from '../constants/Satoshi';
-import Colors from '../constants/Colors';
+import Colors from '../constants/colors';
 import { SvgProps } from 'react-native-svg';
 
 interface ButtonProps {
