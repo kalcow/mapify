@@ -8,8 +8,16 @@ import ms_to_string from '../lib/ms_to_string';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
+
+//!Native Dependencies
 import ImageColors from 'react-native-image-colors';
 import { Modalize } from 'react-native-modalize';
+import { BlurView } from '@react-native-community/blur';
+
+//!development
+import isExpoGo from '../lib/isExpoGo';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const API_ENDPOINT = 'https://mapify-api-service.onrender.com/player';
 
@@ -24,45 +32,48 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const [playState, setPlayState] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [dominantColor, setDominantColor] = useState<string | undefined>('#000');
+    const insets = useSafeAreaInsets();
 
     useEffect(() => {
         if (data !== undefined && data.player_available) {
             w.value = (data.progress_ms / data.item.duration_ms) * 100;
             setPlayState(data.is_playing);
-            const getColors = () => {
-                ImageColors.getColors(data.item.album.images[2].url, {
-                    fallback: Colors.blackBase,
-                    cache: false,
-                    key: 'unique_key',
-                    headers: {
-                        authorization: 'Basic 123',
-                    },
-                }).then((result) => {
-                    // console.log(result);
-                    let primaryColor;
-                    switch (result.platform) {
-                        case 'android':
-                            // android result properties
-                            primaryColor = result.vibrant;
-                            setDominantColor(primaryColor);
-                            break;
-                        case 'web':
-                            // web result properties
-                            primaryColor = result.lightVibrant;
-                            setDominantColor(primaryColor);
-                            break;
-                        case 'ios':
-                            // iOS result properties
-                            primaryColor = result.background;
-                            setDominantColor(primaryColor);
-                            break;
-                        default:
-                            throw new Error('Unexpected platform key');
-                    }
-                });
-            };
+            if (!isExpoGo) {
+                const getColors = () => {
+                    ImageColors.getColors(data.item.album.images[2].url, {
+                        fallback: Colors.blackBase,
+                        cache: false,
+                        key: 'unique_key',
+                        headers: {
+                            authorization: 'Basic 123',
+                        },
+                    }).then((result) => {
+                        // console.log(result);
+                        let primaryColor;
+                        switch (result.platform) {
+                            case 'android':
+                                // android result properties
+                                primaryColor = result.vibrant;
+                                setDominantColor(primaryColor);
+                                break;
+                            case 'web':
+                                // web result properties
+                                primaryColor = result.lightVibrant;
+                                setDominantColor(primaryColor);
+                                break;
+                            case 'ios':
+                                // iOS result properties
+                                primaryColor = result.background;
+                                setDominantColor(primaryColor);
+                                break;
+                            default:
+                                throw new Error('Unexpected platform key');
+                        }
+                    });
+                };
 
-            getColors();
+                getColors();
+            }
         }
     }, [data]);
 
@@ -74,7 +85,7 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
         };
     }, [data]);
 
-    if (data === undefined) {
+    if (data === undefined || dominantColor === undefined) {
         return (
             <View>
                 <Satoshi.Bold style={styles.title}>Loading</Satoshi.Bold>
@@ -112,15 +123,35 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
         <View style={styles.wrapper}>
             <Modal
                 animationType="slide"
-                transparent={false}
+                transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => {
                     setModalVisible(!modalVisible);
                 }}>
-                <View style={styles.ModalWrapper}>
-                    <View style={[styles.colorBlock, { backgroundColor: dominantColor }]} />
-                    <Satoshi.Black>{data.item.name}</Satoshi.Black>
-                </View>
+                {/* <View style={styles.ModalWrapper}> */}
+                <Pressable
+                    style={styles.ModalWrapper}
+                    onPress={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <LinearGradient
+                        colors={[dominantColor, Colors.blackBase]}
+                        style={styles.colorBlock}
+                    />
+                    <View style={[styles.ModalContainer, {paddingTop: insets.top, paddingBottom: insets.bottom}]}>
+                        <Image
+                            style={{
+                                width: '100%',
+                                aspectRatio: 1,
+                                borderRadius: 16,
+                                marginRight: 11,
+                            }}
+                            source={{ uri: data.item.album.images[0].url }}
+                        />
+                        <Satoshi.Black>{data.item.name}</Satoshi.Black>
+                    </View>
+                </Pressable>
+                {/* </View> */}
             </Modal>
             <Image
                 style={{ width: 72, height: 72, borderRadius: 23, marginRight: 11 }}
@@ -254,15 +285,22 @@ const styles = StyleSheet.create({
     ModalWrapper: {
         flex: 1,
         backgroundColor: Colors.blackBase,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        overflow: 'hidden',
     },
-
+    ModalContainer: {
+        padding: 20,
+    },
     colorBlock: {
-        height: '20%',
+        height: '200%',
         width: '100%',
         backgroundColor: 'white',
         position: 'absolute',
-        top: 0,
+        top: "-100%",
         left: 0,
         right: 0,
     },
+    // {"background": "#E38778", "detail": "#994649", "platform": "ios", "primary": "#533F3E", "secondary": "#0A1326"}
+    //{"background": "#211112", "detail": "#FFFFFF", "platform": "ios", "primary": "#FFFFFF", "secondary": "#FFFFFF"}
 });
