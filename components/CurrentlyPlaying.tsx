@@ -1,43 +1,231 @@
-import { View, StyleSheet, Modal, Image, TouchableOpacity, Pressable } from 'react-native';
+import { View, StyleSheet, Modal, Image, TouchableOpacity, Dimensions } from 'react-native';
 import React, { FC, useEffect, useState, useRef } from 'react';
 import Satoshi from '../constants/Satoshi';
 import Colors from '../constants/colors';
 import useSWR from 'swr';
 import { useUserState } from '../context/user';
 import ms_to_string from '../lib/ms_to_string';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+    Layout,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming,
+} from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icons from '../constants/Icons';
+import ControlBar from './ControlBar';
+import { Slider } from '@miblanchard/react-native-slider';
 
 //!Native Dependencies
 import ImageColors from 'react-native-image-colors';
-import { Modalize } from 'react-native-modalize';
-import { BlurView } from '@react-native-community/blur';
 
 //!development
 import isExpoGo from '../lib/isExpoGo';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Spinner from './Spinner';
 
-const API_ENDPOINT = 'https://mapify-api-service.onrender.com/player';
+const API_ENDPOINT = 'https://mapify-server.fly.dev/player';
 
 interface CurrentlyPlaying {}
+
+interface Bar {
+    height: number;
+    active: boolean;
+}
+
+interface CurrentlyPlayingModal {
+    data: any;
+    artists: string;
+    dominantColor: string;
+    modalVisible: boolean;
+    setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    loadingSF: boolean;
+    setLoadingSF: React.Dispatch<React.SetStateAction<boolean>>;
+    bars: JSX.Element[];
+    pause: () => void;
+    percentDuration: number;
+    width: number;
+}
+
+const Bar: FC<Bar> = ({ height, active }) => {
+    return (
+        <View
+            style={[
+                styles.bar,
+                { height: height, backgroundColor: active ? Colors.accentColor : '#62636b' },
+            ]}
+        />
+    );
+};
+
+const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
+    data,
+    artists,
+    dominantColor,
+    modalVisible,
+    setModalVisible,
+    loadingSF,
+    setLoadingSF,
+    bars,
+    pause,
+    percentDuration,
+    width,
+}) => {
+    const [sliding, setSliding] = useState<boolean>(false);
+    const [sliderValue, setSliderValue] = useState<number>(percentDuration / width);
+    const insets = useSafeAreaInsets();
+    const u = useUserState();
+
+    useEffect(() => {
+        setSliderValue(percentDuration / width);
+        if (!loadingSF) {
+            setSliding(false);
+        }
+    }, [percentDuration]);
+    return (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+                setModalVisible(!modalVisible);
+            }}>
+            <Animated.View style={styles.ModalWrapper} layout={Layout.duration(200)}>
+                <LinearGradient
+                    colors={[dominantColor, Colors.blackBase]}
+                    style={styles.colorBlock}
+                />
+                <View
+                    style={[
+                        styles.ModalContainer,
+                        { paddingTop: insets.top, paddingBottom: insets.bottom },
+                    ]}>
+                    <View>
+                        <View style={styles.cpHeader}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setModalVisible(!modalVisible);
+                                }}>
+                                <Icons.DownChevron />
+                            </TouchableOpacity>
+                            <Animated.View
+                                layout={Layout.duration(200)}
+                                style={styles.cpHeaderTextWrapper}>
+                                <Satoshi.Bold style={styles.cpHeaderText}>
+                                    Currently Playing
+                                </Satoshi.Bold>
+                                {loadingSF && <Spinner />}
+                            </Animated.View>
+                            <TouchableOpacity>
+                                <Icons.Analytics />
+                            </TouchableOpacity>
+                        </View>
+                        <Image
+                            style={{
+                                width: '100%',
+                                aspectRatio: 1,
+                                borderRadius: 16,
+                            }}
+                            source={{ uri: data.item.album.images[0].url }}
+                        />
+                        <View style={styles.songDetailWrapper}>
+                            <Satoshi.Black style={styles.songTitle}>{data.item.name}</Satoshi.Black>
+                            <Satoshi.Medium style={styles.songArtists}>{artists}</Satoshi.Medium>
+                            <View style={styles.device}>
+                                <Svg width={9} height={11} style={{ marginRight: 3 }} fill="none">
+                                    <Path
+                                        d="M4.5 2.8h.004M1.875 1h5.25c.483 0 .875.403.875.9v7.2c0 .497-.392.9-.875.9h-5.25A.888.888 0 0 1 1 9.1V1.9c0-.497.392-.9.875-.9ZM6.25 6.4c0 .994-.784 1.8-1.75 1.8s-1.75-.806-1.75-1.8.784-1.8 1.75-1.8 1.75.806 1.75 1.8Z"
+                                        stroke={Colors.textTwo}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </Svg>
+                                <Satoshi.Medium style={styles.artists}>
+                                    Playing from {data.device.name}
+                                </Satoshi.Medium>
+                            </View>
+                        </View>
+                    </View>
+                    <View>
+                        <View style={[styles.waveformWrapper, { width: width }]}>
+                            {bars}
+                            <Slider
+                                value={sliderValue}
+                                onValueChange={(number) => {
+                                    sliding
+                                        ? //@ts-ignore
+                                          setSliderValue(number[0])
+                                        : setSliderValue(percentDuration / width);
+                                }}
+                                maximumTrackTintColor="rgba(0, 0, 0, 0)"
+                                minimumTrackTintColor="rgba(0, 0, 0, 0)"
+                                renderThumbComponent={() => {
+                                    return (
+                                        <TouchableOpacity
+                                            style={{
+                                                width: 4,
+                                                height: 65,
+                                                backgroundColor: Colors.text,
+                                                borderRadius: 4,
+                                                position: 'relative',
+                                            }}>
+                                            {/* <View style={{width: 8, height: 8, backgroundColor: Colors.text, borderRadius: 8, bottom: -5, left: -2, position: 'absolute'}}/> */}
+                                        </TouchableOpacity>
+                                    );
+                                }}
+                                containerStyle={styles.sliderContainer}
+                                onSlidingComplete={(duration: number[] | number) => {
+                                    SpotifyActions.seek(
+                                        u.refreshToken!.spotify,
+                                        //@ts-ignore
+                                        Math.floor(duration[0] * data.item.duration_ms)
+                                    ).then(() => {
+                                        setLoadingSF(true);
+                                        setTimeout(() => {
+                                            setSliding(false);
+                                        }, 1500);
+                                    });
+                                }}
+                                onSlidingStart={() => {
+                                    setSliding(true);
+                                }}
+                            />
+                        </View>
+                        <View style={styles.songTimeStampWrapper}>
+                            <Satoshi.Regular style={styles.songTimeStamp}>
+                                {ms_to_string(data.progress_ms)}
+                            </Satoshi.Regular>
+                            <Satoshi.Regular style={styles.songTimeStamp}>
+                                {ms_to_string(data.item.duration_ms)}
+                            </Satoshi.Regular>
+                        </View>
+                        <ControlBar playPause={pause} SFState={[loadingSF, setLoadingSF]} />
+                    </View>
+                </View>
+            </Animated.View>
+        </Modal>
+    );
+};
 
 const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const u = useUserState();
     const fetcher = (url: RequestInfo | URL) =>
         fetch(url, { headers: { refresh_token: u.refreshToken!.spotify } }).then((r) => r.json());
-    const { data, error } = useSWR(API_ENDPOINT, fetcher, { refreshInterval: 1000 });
+    const { data, error } = useSWR(API_ENDPOINT, fetcher, { refreshInterval: 500 });
     const w = useSharedValue(0);
     const [playState, setPlayState] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [dominantColor, setDominantColor] = useState<string | undefined>('#000');
+    const [loadingSF, setLoadingSF] = useState<boolean>(false);
     const insets = useSafeAreaInsets();
 
     useEffect(() => {
         if (data !== undefined && data.player_available) {
             w.value = (data.progress_ms / data.item.duration_ms) * 100;
             setPlayState(data.is_playing);
+            setLoadingSF(false);
             if (!isExpoGo) {
                 const getColors = () => {
                     ImageColors.getColors(data.item.album.images[2].url, {
@@ -87,8 +275,9 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
 
     if (data === undefined || dominantColor === undefined) {
         return (
-            <View>
-                <Satoshi.Bold style={styles.title}>Loading</Satoshi.Bold>
+            <View style={styles.cpHeaderTextWrapper}>
+                <Satoshi.Bold style={styles.title}>Connecting</Satoshi.Bold>
+                <Spinner />
             </View>
         );
     }
@@ -104,6 +293,7 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     }
 
     const pause = () => {
+        setLoadingSF(true);
         if (playState) {
             SpotifyActions.pause(u.refreshToken!.spotify).then(() => {
                 console.log('paused');
@@ -119,40 +309,63 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
 
     const artists: string = data.item.artists.map((_artist: any) => _artist.name).join(', ');
 
+    //Waveform Generation
+    const width = Dimensions.get('window').width - 40;
+    const height = 60;
+    const barSize = 2;
+    const barGap = 2;
+
+    const bars: JSX.Element[] = [];
+
+    let waveform: number[] = data.waveform;
+    let bucketSize = waveform.length / (width / (barSize + barGap));
+
+    let percentDuration = data.progress_ms / data.item.duration_ms;
+    let songCompleteMax = percentDuration * (width / (barSize + barGap));
+    let final = 0;
+
+    for (let i = 0; i < width / (barSize + barGap); i++) {
+        let bucket = waveform.slice(i * bucketSize, (i + 1) * bucketSize);
+        let sum: number = bucket.reduce(
+            (accumulator, currentValue) => accumulator + currentValue,
+            0
+        );
+
+        let average = sum / bucketSize;
+
+        if (i <= songCompleteMax) {
+            final = i;
+        }
+
+        if (average * height < 2) {
+            bars.push(<Bar key={i} height={2} active={i <= songCompleteMax} />);
+        } else {
+            bars.push(<Bar key={i} height={average * height} active={i <= songCompleteMax} />);
+        }
+    }
+
+    let numBuckets = Math.ceil(width / (barSize + barGap));
+    let bucketGap = (width - numBuckets * 2) / (numBuckets - 1);
+    let final_width = 0;
+    if (final) {
+        final_width = final * barSize + (final + 1) * bucketGap;
+    }
+
     return (
         <View style={styles.wrapper}>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}>
-                {/* <View style={styles.ModalWrapper}> */}
-                <Pressable
-                    style={styles.ModalWrapper}
-                    onPress={() => {
-                        setModalVisible(!modalVisible);
-                    }}>
-                    <LinearGradient
-                        colors={[dominantColor, Colors.blackBase]}
-                        style={styles.colorBlock}
-                    />
-                    <View style={[styles.ModalContainer, {paddingTop: insets.top, paddingBottom: insets.bottom}]}>
-                        <Image
-                            style={{
-                                width: '100%',
-                                aspectRatio: 1,
-                                borderRadius: 16,
-                                marginRight: 11,
-                            }}
-                            source={{ uri: data.item.album.images[0].url }}
-                        />
-                        <Satoshi.Black>{data.item.name}</Satoshi.Black>
-                    </View>
-                </Pressable>
-                {/* </View> */}
-            </Modal>
+            <CurrentlyPlayingModal
+                data={data}
+                artists={artists}
+                dominantColor={dominantColor}
+                modalVisible={modalVisible}
+                setModalVisible={setModalVisible}
+                loadingSF={loadingSF}
+                setLoadingSF={setLoadingSF}
+                bars={bars}
+                pause={pause}
+                percentDuration={final_width}
+                width={width}
+            />
             <Image
                 style={{ width: 72, height: 72, borderRadius: 23, marginRight: 11 }}
                 source={{ uri: data.item.album.images[0].url }}
@@ -171,7 +384,7 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
                             <Svg width={9} height={11} style={{ marginRight: 3 }} fill="none">
                                 <Path
                                     d="M4.5 2.8h.004M1.875 1h5.25c.483 0 .875.403.875.9v7.2c0 .497-.392.9-.875.9h-5.25A.888.888 0 0 1 1 9.1V1.9c0-.497.392-.9.875-.9ZM6.25 6.4c0 .994-.784 1.8-1.75 1.8s-1.75-.806-1.75-1.8.784-1.8 1.75-1.8 1.75.806 1.75 1.8Z"
-                                    stroke="#C2C8D7"
+                                    stroke={Colors.textTwo}
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 />
@@ -210,6 +423,7 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
 export default CurrentlyPlaying;
 
 const styles = StyleSheet.create({
+    //CP widget
     wrapper: {
         width: '100%',
         flexDirection: 'row',
@@ -232,7 +446,7 @@ const styles = StyleSheet.create({
     },
     artists: {
         fontSize: 12,
-        color: '#C2C8D7',
+        color: Colors.textTwo,
     },
     progressSectionWrapper: {
         flexDirection: 'row',
@@ -248,7 +462,7 @@ const styles = StyleSheet.create({
     },
     progressBarWrapper: {
         position: 'relative',
-        backgroundColor: '#C2C8D7',
+        backgroundColor: Colors.textTwo,
         flex: 1,
         height: 4,
         borderRadius: 10,
@@ -279,9 +493,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 2,
     },
-
     //modal
-
     ModalWrapper: {
         flex: 1,
         backgroundColor: Colors.blackBase,
@@ -291,16 +503,77 @@ const styles = StyleSheet.create({
     },
     ModalContainer: {
         padding: 20,
+        justifyContent: 'space-between',
+        flex: 1,
     },
     colorBlock: {
         height: '200%',
         width: '100%',
         backgroundColor: 'white',
         position: 'absolute',
-        top: "-100%",
+        top: '-100%',
         left: 0,
         right: 0,
     },
-    // {"background": "#E38778", "detail": "#994649", "platform": "ios", "primary": "#533F3E", "secondary": "#0A1326"}
-    //{"background": "#211112", "detail": "#FFFFFF", "platform": "ios", "primary": "#FFFFFF", "secondary": "#FFFFFF"}
+    cpHeader: {
+        width: '100%',
+        paddingVertical: 15,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    cpHeaderTextWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 24,
+    },
+    cpHeaderText: {
+        color: Colors.text,
+    },
+    //Song Details
+    songDetailWrapper: {
+        paddingVertical: 25,
+    },
+    songTitle: {
+        color: Colors.text,
+        fontSize: 20,
+        marginBottom: 4,
+    },
+    songArtists: {
+        fontSize: 16,
+        color: Colors.textTwo,
+        marginBottom: 15,
+    },
+    songTimeStampWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    songTimeStamp: {
+        fontSize: 10,
+        color: Colors.text,
+        letterSpacing: 1.2,
+    },
+    //Waveform
+    waveformWrapper: {
+        height: 60,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+        position: 'relative',
+        marginBottom: 10,
+    },
+    bar: {
+        width: 2,
+        backgroundColor: '#62636b',
+        height: '100%',
+        borderRadius: 5,
+    },
+    sliderContainer: {
+        position: 'absolute',
+        height: 60,
+        width: '100%',
+        // backgroundColor: 'red'
+    },
 });

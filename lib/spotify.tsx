@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Buffer } from "buffer";
+import { Buffer } from 'buffer';
 import { client_id as id, client_secret as secret } from './spotify-keys';
 
 const client_id = id;
@@ -39,6 +39,21 @@ const putSpotifyData = async (endpoint: string, refresh_token: string) => {
     return response;
 };
 
+const postSpotifyData = async (endpoint: string, refresh_token: string) => {
+    const { access_token } = await getAccessToken(refresh_token);
+
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${access_token}`,
+        },
+    });
+
+    return response;
+};
+
 const SpotifyActions = {
     pause: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/pause';
@@ -51,7 +66,26 @@ const SpotifyActions = {
         const refreshToken = token;
         const response = await putSpotifyData(ENDPOINT, refreshToken);
         return response;
+    },
+    skipForward: async (token: string) => {
+        const ENDPOINT = 'https://api.spotify.com/v1/me/player/next';
+        const refreshToken = token;
+        const response = await postSpotifyData(ENDPOINT, refreshToken);
+        return response;
+    },
+    skipBack: async (token: string) => {
+        const ENDPOINT = 'https://api.spotify.com/v1/me/player/previous';
+        const refreshToken = token;
+        const response = await postSpotifyData(ENDPOINT, refreshToken);
+        return response;
+    },
+    seek: async (token: string, position_ms: number) => {
+        const ENDPOINT = `https://api.spotify.com/v1/me/player/seek?position_ms=${position_ms}`;
+        const refreshToken = token;
+        const response = await putSpotifyData(ENDPOINT, refreshToken);
+        return response;
     }
 };
 
-export default SpotifyActions; 
+export default SpotifyActions;
+export { getAccessToken };
