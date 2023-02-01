@@ -5,14 +5,16 @@ import Icons from '../constants/Icons';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
 import { useUserState } from '../context/user';
+import { KeyedMutator } from 'swr';
 
 interface ControlBar {
     playPause: () => void;
     SFState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     data: any;
+    mutate: KeyedMutator<any>; 
 }
 
-const ControlBar: FC<ControlBar> = ({ playPause, SFState, data }) => {
+const ControlBar: FC<ControlBar> = ({ playPause, SFState, data, mutate }) => {
     const u = useUserState();
     return (
         <View style={styles.controlBar}>
@@ -24,6 +26,7 @@ const ControlBar: FC<ControlBar> = ({ playPause, SFState, data }) => {
                     onPress={() => {
                         SFState[1](true);
                         SpotifyActions.skipBack(u.accessToken!.spotify).then(() => {
+                            mutate(); 
                             console.log('skipped song');
                         });
                     }}>
@@ -45,6 +48,7 @@ const ControlBar: FC<ControlBar> = ({ playPause, SFState, data }) => {
                     onPress={() => {
                         SFState[1](true);
                         SpotifyActions.skipForward(u.accessToken!.spotify).then(() => {
+                            mutate(); 
                             console.log('skipped song');
                         });
                     }}>

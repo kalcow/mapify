@@ -2,7 +2,7 @@ import { View, StyleSheet, Modal, Image, TouchableOpacity, Dimensions } from 're
 import React, { FC, useEffect, useState, useRef } from 'react';
 import Satoshi from '../constants/Satoshi';
 import Colors from '../constants/colors';
-import useSWR from 'swr';
+import useSWR, { KeyedMutator } from 'swr';
 import { useUserState } from '../context/user';
 import ms_to_string from '../lib/ms_to_string';
 import Animated, {
@@ -47,6 +47,7 @@ interface CurrentlyPlayingModal {
     pause: () => void;
     percentDuration: number;
     width: number;
+    mutate: KeyedMutator<any>;
 }
 
 const Bar: FC<Bar> = ({ height, active }) => {
@@ -72,6 +73,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
     pause,
     percentDuration,
     width,
+    mutate, 
 }) => {
     const [sliding, setSliding] = useState<boolean>(false);
     const [sliderValue, setSliderValue] = useState<number>(percentDuration / width);
@@ -185,6 +187,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                         //@ts-ignore
                                         Math.floor(duration[0] * data.item.duration_ms)
                                     ).then(() => {
+                                        mutate(); 
                                         setTimeout(() => {
                                             setSliding(false);
                                         }, 3000);
@@ -203,7 +206,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                 {ms_to_string(data.item.duration_ms)}
                             </Satoshi.Regular>
                         </View>
-                        <ControlBar playPause={pause} SFState={[loadingSF, setLoadingSF]} data={data} />
+                        <ControlBar playPause={pause} SFState={[loadingSF, setLoadingSF]} data={data} mutate={mutate} />
                     </View>
                 </View>
             </Animated.View>
@@ -215,7 +218,7 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const u = useUserState();
     const fetcher = (url: RequestInfo | URL) =>
         fetch(url, { headers: { access_token: u.accessToken!.spotify } }).then((r) => r.json());
-    const { data, error } = useSWR(API_ENDPOINT, fetcher, { refreshInterval: 500 });
+    const { data, error, mutate } = useSWR(API_ENDPOINT, fetcher, { refreshInterval: 500 });
     const w = useSharedValue(0);
     const [playState, setPlayState] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -302,11 +305,13 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
             SpotifyActions.pause(u.accessToken!.spotify).then(() => {
                 console.log('paused');
                 setPlayState(!playState);
+                mutate(); 
             });
         } else {
             SpotifyActions.play(u.accessToken!.spotify).then(() => {
                 console.log('playing');
                 setPlayState(!playState);
+                mutate(); 
             });
         }
     };
@@ -369,6 +374,7 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
                 pause={pause}
                 percentDuration={final_width}
                 width={width}
+                mutate={mutate}
             />
             <Image
                 style={{ width: 72, height: 72, borderRadius: 23, marginRight: 11 }}
