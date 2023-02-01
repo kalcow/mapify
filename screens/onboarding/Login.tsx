@@ -15,28 +15,29 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type Props = {};
 
 const Login = (props: Props) => {
-    const u = useUserState(); 
-    const authState = useAuthState(); 
+    const u = useUserState();
+    const authState = useAuthState();
     const navigator = useNavigation();
     const signInWithSpotify = async () => {
-        const returnUrl = makeRedirectUri({
-            useProxy: true,
+        const redirectUri = makeRedirectUri({
+            native: 'mapify://auth',
+            scheme: 'mapify',
+            path: '/auth',
         });
-        
+
         const signInParameters = {
             provider: 'spotify' as Provider,
             options: {
-                redirectTo: returnUrl,
+                redirectTo: redirectUri,
                 scopes: [
                     'user-read-email',
                     'playlist-read-private',
                     'user-read-currently-playing',
-                    'user-read-playback-state', 
-                    'user-modify-playback-state', 
+                    'user-read-playback-state',
+                    'user-modify-playback-state',
                 ].join(' '),
             },
         };
-
 
         const authUrl = (await supabase.auth.signInWithOAuth(signInParameters)).data.url;
 
@@ -51,10 +52,13 @@ const Login = (props: Props) => {
                 return;
             }
 
-            // console.log("response", response); 
+            // console.log("response", response);
 
             //@ts-ignore
-            await AsyncStorage.setItem('@spotify_refresh_token', response.params?.provider_refresh_token)
+            await AsyncStorage.setItem(
+                '@spotify_refresh_token',
+                response.params?.provider_refresh_token
+            );
 
             const { data, error } = await supabase.auth.refreshSession({
                 //@ts-ignore
@@ -62,9 +66,8 @@ const Login = (props: Props) => {
             });
 
             const { session, user } = data;
-            console.log("data", data);
-            u.session?.set(JSON.stringify(session)); 
-
+            console.log('data', data);
+            u.session?.set(JSON.stringify(session));
         }
     };
 
