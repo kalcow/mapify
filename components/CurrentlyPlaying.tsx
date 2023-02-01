@@ -93,10 +93,11 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                 setModalVisible(!modalVisible);
             }}>
             <Animated.View style={styles.ModalWrapper} layout={Layout.duration(200)}>
-                <LinearGradient
+                {
+                    <LinearGradient
                     colors={[dominantColor, Colors.blackBase]}
                     style={styles.colorBlock}
-                />
+                />}
                 <View
                     style={[
                         styles.ModalContainer,
@@ -130,7 +131,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                             }}
                             source={{ uri: data.item.album.images[0].url }}
                         />
-                        <View style={styles.songDetailWrapper}>
+                        <View style={[styles.songDetailWrapper, {opacity: loadingSF ?  0.5 : 1}]}>
                             <Satoshi.Black style={styles.songTitle}>{data.item.name}</Satoshi.Black>
                             <Satoshi.Medium style={styles.songArtists}>{artists}</Satoshi.Medium>
                             <View style={styles.device}>
@@ -180,7 +181,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                     setSliding(true);
                                     setLoadingSF(true);
                                     SpotifyActions.seek(
-                                        u.refreshToken!.spotify,
+                                        u.accessToken!.spotify,
                                         //@ts-ignore
                                         Math.floor(duration[0] * data.item.duration_ms)
                                     ).then(() => {
@@ -213,20 +214,18 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
 const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const u = useUserState();
     const fetcher = (url: RequestInfo | URL) =>
-        fetch(url, { headers: { refresh_token: u.refreshToken!.spotify } }).then((r) => r.json());
+        fetch(url, { headers: { access_token: u.accessToken!.spotify } }).then((r) => r.json());
     const { data, error } = useSWR(API_ENDPOINT, fetcher, { refreshInterval: 500 });
     const w = useSharedValue(0);
     const [playState, setPlayState] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const [dominantColor, setDominantColor] = useState<string | undefined>('#000');
     const [loadingSF, setLoadingSF] = useState<boolean>(false);
-    const insets = useSafeAreaInsets();
 
     useEffect(() => {
         if (data !== undefined && data.player_available) {
             w.value = (data.progress_ms / data.item.duration_ms) * 100;
             setPlayState(data.is_playing);
-            setLoadingSF(false);
             if (!isExpoGo) {
                 const getColors = () => {
                     ImageColors.getColors(data.item.album.images[2].url, {
@@ -258,10 +257,14 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
                             default:
                                 throw new Error('Unexpected platform key');
                         }
+
+                        setLoadingSF(false);
                     });
                 };
 
                 getColors();
+            } else {
+                setLoadingSF(false);
             }
         }
     }, [data]);
@@ -296,12 +299,12 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const pause = () => {
         setLoadingSF(true);
         if (playState) {
-            SpotifyActions.pause(u.refreshToken!.spotify).then(() => {
+            SpotifyActions.pause(u.accessToken!.spotify).then(() => {
                 console.log('paused');
                 setPlayState(!playState);
             });
         } else {
-            SpotifyActions.play(u.refreshToken!.spotify).then(() => {
+            SpotifyActions.play(u.accessToken!.spotify).then(() => {
                 console.log('playing');
                 setPlayState(!playState);
             });

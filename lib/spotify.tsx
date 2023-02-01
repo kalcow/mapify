@@ -24,8 +24,8 @@ const getAccessToken = async (refresh_token: string) => {
     return response.data;
 };
 
-const putSpotifyData = async (endpoint: string, refresh_token: string) => {
-    const { access_token } = await getAccessToken(refresh_token);
+const putSpotifyData = async (endpoint: string, access_token: string) => {
+    // const { access_token } = await getAccessToken(refresh_token);
 
     const response = await fetch(endpoint, {
         method: 'PUT',
@@ -39,8 +39,7 @@ const putSpotifyData = async (endpoint: string, refresh_token: string) => {
     return response;
 };
 
-const postSpotifyData = async (endpoint: string, refresh_token: string) => {
-    const { access_token } = await getAccessToken(refresh_token);
+const postSpotifyData = async (endpoint: string, access_token: string) => {
 
     const response = await fetch(endpoint, {
         method: 'POST',
@@ -57,32 +56,32 @@ const postSpotifyData = async (endpoint: string, refresh_token: string) => {
 const SpotifyActions = {
     pause: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/pause';
-        const refreshToken = token;
-        const response = await putSpotifyData(ENDPOINT, refreshToken);
+        const accessToken = token;
+        const response = await putSpotifyData(ENDPOINT, accessToken);
         return response;
     },
     play: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/play';
-        const refreshToken = token;
-        const response = await putSpotifyData(ENDPOINT, refreshToken);
+        const accessToken = token;
+        const response = await putSpotifyData(ENDPOINT, accessToken);
         return response;
     },
     skipForward: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/next';
-        const refreshToken = token;
-        const response = await postSpotifyData(ENDPOINT, refreshToken);
+        const accessToken = token;
+        const response = await postSpotifyData(ENDPOINT, accessToken);
         return response;
     },
     skipBack: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/previous';
-        const refreshToken = token;
-        const response = await postSpotifyData(ENDPOINT, refreshToken);
+        const accessToken = token;
+        const response = await postSpotifyData(ENDPOINT, accessToken);
         return response;
     },
     seek: async (token: string, position_ms: number) => {
         const ENDPOINT = `https://api.spotify.com/v1/me/player/seek?position_ms=${position_ms}`;
-        const refreshToken = token;
-        const response = await putSpotifyData(ENDPOINT, refreshToken);
+        const accessToken = token;
+        const response = await putSpotifyData(ENDPOINT, accessToken);
         return response;
     }
 };

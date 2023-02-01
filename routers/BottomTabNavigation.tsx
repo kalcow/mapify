@@ -39,7 +39,7 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
         <View
             style={{
                 ...styles.wrapper,
-                bottom: insets.bottom - 10,
+                bottom: insets.bottom,
                 left: insets.left,
                 right: insets.right,
             }}>

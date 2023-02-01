@@ -42,11 +42,11 @@ const UserWrapper: FC<UserWrapper> = ({ children }) => {
                 setRefreshToken(data);
                 try {
                     const { access_token: first_token } = await getAccessToken(data);
-                    setAccessToken(accessToken); 
+                    setAccessToken(first_token); 
                     setInterval(async () => {
                         const { access_token: repeat_token } = await getAccessToken(data);
-                        setAccessToken(accessToken)
-                    }, 900000)
+                        setAccessToken(repeat_token)
+                    }, 2700000) //refresh access_token every 45 minutes
                 }
                 catch (e) {
                     alert('Failed to get get access token');

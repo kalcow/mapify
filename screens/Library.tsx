@@ -15,7 +15,7 @@ export default function Library() {
     const getToken = async () => {
         const value = await AsyncStorage.getItem('@spotify_refresh_token');
         if (value !== null) {
-            alert(value); 
+            console.log(value); 
         }
     };
 

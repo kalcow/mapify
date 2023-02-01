@@ -23,20 +23,9 @@ const ControlBar: FC<ControlBar> = ({ playPause, SFState, data }) => {
                 <TouchableOpacity
                     onPress={() => {
                         SFState[1](true);
-                        SpotifyActions.skipBack(u.refreshToken!.spotify).then(() => {
+                        SpotifyActions.skipBack(u.accessToken!.spotify).then(() => {
                             console.log('skipped song');
                         });
-                        // if (data.progress_ms < 7000) {
-                        //     SpotifyActions.skipBack(u.refreshToken!.spotify).then(() => {
-                        //         console.log('skipped song');
-                        //     });
-                        // } else {
-                        //     SpotifyActions.seek(
-                        //         u.refreshToken!.spotify, 0
-                        //     ).then(() => {
-                        //         console.log("restarting song")
-                        //     });
-                        // }
                     }}>
                     <Icons.skipBack />
                 </TouchableOpacity>
@@ -55,7 +44,7 @@ const ControlBar: FC<ControlBar> = ({ playPause, SFState, data }) => {
                 <TouchableOpacity
                     onPress={() => {
                         SFState[1](true);
-                        SpotifyActions.skipForward(u.refreshToken!.spotify).then(() => {
+                        SpotifyActions.skipForward(u.accessToken!.spotify).then(() => {
                             console.log('skipped song');
                         });
                     }}>

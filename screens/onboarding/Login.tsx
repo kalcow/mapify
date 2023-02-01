@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useUserState } from '../../context/user';
 import { useAuthState } from '../../hooks/useAuthState';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import isExpoGo from '../../lib/isExpoGo';
 
 type Props = {};
 
@@ -21,9 +22,12 @@ const Login = (props: Props) => {
     const signInWithSpotify = async () => {
         const redirectUri = makeRedirectUri({
             native: 'mapify://auth',
+            useProxy: isExpoGo ? true : false,
             scheme: 'mapify',
             path: '/auth',
         });
+
+        console.log(redirectUri); 
 
         const signInParameters = {
             provider: 'spotify' as Provider,
@@ -40,6 +44,7 @@ const Login = (props: Props) => {
         };
 
         const authUrl = (await supabase.auth.signInWithOAuth(signInParameters)).data.url;
+        console.log(authUrl)
 
         if (authUrl !== null) {
             //@ts-ignore
