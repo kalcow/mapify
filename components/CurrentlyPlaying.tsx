@@ -177,15 +177,16 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                 }}
                                 containerStyle={styles.sliderContainer}
                                 onSlidingComplete={(duration: number[] | number) => {
+                                    setSliding(true);
+                                    setLoadingSF(true);
                                     SpotifyActions.seek(
                                         u.refreshToken!.spotify,
                                         //@ts-ignore
                                         Math.floor(duration[0] * data.item.duration_ms)
                                     ).then(() => {
-                                        setLoadingSF(true);
                                         setTimeout(() => {
                                             setSliding(false);
-                                        }, 1500);
+                                        }, 3000);
                                     });
                                 }}
                                 onSlidingStart={() => {
@@ -201,7 +202,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                 {ms_to_string(data.item.duration_ms)}
                             </Satoshi.Regular>
                         </View>
-                        <ControlBar playPause={pause} SFState={[loadingSF, setLoadingSF]} />
+                        <ControlBar playPause={pause} SFState={[loadingSF, setLoadingSF]} data={data} />
                     </View>
                 </View>
             </Animated.View>

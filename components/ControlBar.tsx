@@ -5,14 +5,14 @@ import Icons from '../constants/Icons';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
 import { useUserState } from '../context/user';
-import LottieView from 'lottie-react-native';
 
 interface ControlBar {
     playPause: () => void;
     SFState: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
+    data: any;
 }
 
-const ControlBar: FC<ControlBar> = ({ playPause, SFState }) => {
+const ControlBar: FC<ControlBar> = ({ playPause, SFState, data }) => {
     const u = useUserState();
     return (
         <View style={styles.controlBar}>
@@ -26,6 +26,17 @@ const ControlBar: FC<ControlBar> = ({ playPause, SFState }) => {
                         SpotifyActions.skipBack(u.refreshToken!.spotify).then(() => {
                             console.log('skipped song');
                         });
+                        // if (data.progress_ms < 7000) {
+                        //     SpotifyActions.skipBack(u.refreshToken!.spotify).then(() => {
+                        //         console.log('skipped song');
+                        //     });
+                        // } else {
+                        //     SpotifyActions.seek(
+                        //         u.refreshToken!.spotify, 0
+                        //     ).then(() => {
+                        //         console.log("restarting song")
+                        //     });
+                        // }
                     }}>
                     <Icons.skipBack />
                 </TouchableOpacity>
@@ -49,24 +60,6 @@ const ControlBar: FC<ControlBar> = ({ playPause, SFState }) => {
                         });
                     }}>
                     <Icons.skipForward />
-                    {/* {!SFState[0] && <Icons.skipForward />}
-                    {SFState[0] && (
-                        <View style={{ width: 24, height: 24, overflow: 'hidden' }}>
-                            <View style={{ transform: [{ translateX: -24}, {translateY: -6}] }}>
-                                <LottieView
-                                    autoPlay
-                                    loop
-                                    style={{
-                                        width: 36,
-                                        height: 36,
-                                        backgroundColor: 'rgba(0, 0, 0, 0)',
-                                    }}
-                                    // Find more Lottie files at https://lottiefiles.com/featured
-                                    source={require('../assets/Loading-2.json')}
-                                />
-                            </View>
-                        </View>
-                    )} */}
                 </TouchableOpacity>
             </View>
             <TouchableOpacity>
