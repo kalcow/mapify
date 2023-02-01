@@ -42,7 +42,8 @@ const Login = (props: Props) => {
         const authUrl = (await supabase.auth.signInWithOAuth(signInParameters)).data.url;
 
         if (authUrl !== null) {
-            const response = await startAsync({ authUrl, returnUrl });
+            //@ts-ignore
+            const response = await startAsync({ authUrl, redirectUri });
             if (response.type == 'success') {
                 await Linking.openURL(response.url);
             }
@@ -54,9 +55,9 @@ const Login = (props: Props) => {
 
             // console.log("response", response);
 
-            //@ts-ignore
             await AsyncStorage.setItem(
                 '@spotify_refresh_token',
+                //@ts-ignore
                 response.params?.provider_refresh_token
             );
 
