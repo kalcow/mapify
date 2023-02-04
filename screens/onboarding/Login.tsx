@@ -50,7 +50,11 @@ const Login = (props: Props) => {
             //@ts-ignore
             const response = await startAsync({ authUrl, redirectUri });
             if (response.type == 'success') {
+                console.log('success')
+                console.log(response.url); 
                 await Linking.openURL(response.url);
+            } else {
+                console.log('failed')
             }
 
             //@ts-ignore

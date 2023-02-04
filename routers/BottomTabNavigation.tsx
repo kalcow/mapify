@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     songContainer: {
-        height: 72,
+        // height: 72,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 7, 

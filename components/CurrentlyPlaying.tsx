@@ -10,6 +10,8 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue,
     withTiming,
+    useAnimatedSensor,
+    SensorType,
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
@@ -73,7 +75,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
     pause,
     percentDuration,
     width,
-    mutate, 
+    mutate,
 }) => {
     const [sliding, setSliding] = useState<boolean>(false);
     const [sliderValue, setSliderValue] = useState<number>(percentDuration / width);
@@ -86,6 +88,28 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
             setSliding(false);
         }
     }, [percentDuration]);
+
+    const animatedSensor = useAnimatedSensor(SensorType.ROTATION, {
+        interval: 10,
+        
+    });
+
+    const style = useAnimatedStyle(() => {
+        const { pitch, roll } = animatedSensor.sensor.value;
+
+        const min = -10;
+        const max = 10; 
+        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max); 
+
+        let rollValue = clamp(0.2 * (180/Math.PI) * roll, min, max);
+        let pitchValue = clamp(0.2 * (((180/Math.PI) * pitch) - 90), min, max); 
+        
+        return {
+            transform: [{ perspective: 1000 }, { rotateY: withTiming(`${-rollValue}deg`, {duration: 10}) }, { rotateX: withTiming(`${pitchValue}deg`, {duration: 10}) }],
+        };
+
+    });
+
     return (
         <Modal
             animationType="slide"
@@ -97,9 +121,10 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
             <Animated.View style={styles.ModalWrapper} layout={Layout.duration(200)}>
                 {
                     <LinearGradient
-                    colors={[dominantColor, Colors.blackBase]}
-                    style={styles.colorBlock}
-                />}
+                        colors={[dominantColor, Colors.blackBase]}
+                        style={styles.colorBlock}
+                    />
+                }
                 <View
                     style={[
                         styles.ModalContainer,
@@ -126,14 +151,17 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                             </TouchableOpacity>
                         </View>
                         <Image
-                            style={{
-                                width: '100%',
-                                aspectRatio: 1,
-                                borderRadius: 16,
-                            }}
+                            style={[
+                                {
+                                    maxWidth: '100%',
+                                    aspectRatio: 1,
+                                    borderRadius: 16,
+                                },
+                                // style,
+                            ]}
                             source={{ uri: data.item.album.images[0].url }}
                         />
-                        <View style={[styles.songDetailWrapper, {opacity: loadingSF ?  0.5 : 1}]}>
+                        <View style={[styles.songDetailWrapper, { opacity: loadingSF ? 0.5 : 1 }]}>
                             <Satoshi.Black style={styles.songTitle}>{data.item.name}</Satoshi.Black>
                             <Satoshi.Medium style={styles.songArtists}>{artists}</Satoshi.Medium>
                             <View style={styles.device}>
@@ -187,7 +215,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                         //@ts-ignore
                                         Math.floor(duration[0] * data.item.duration_ms)
                                     ).then(() => {
-                                        mutate(); 
+                                        mutate();
                                         setTimeout(() => {
                                             setSliding(false);
                                         }, 3000);
@@ -206,7 +234,12 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                 {ms_to_string(data.item.duration_ms)}
                             </Satoshi.Regular>
                         </View>
-                        <ControlBar playPause={pause} SFState={[loadingSF, setLoadingSF]} data={data} mutate={mutate} />
+                        <ControlBar
+                            playPause={pause}
+                            SFState={[loadingSF, setLoadingSF]}
+                            data={data}
+                            mutate={mutate}
+                        />
                     </View>
                 </View>
             </Animated.View>
@@ -282,16 +315,16 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
 
     if (data === undefined || dominantColor === undefined) {
         return (
-            <View style={styles.cpHeaderTextWrapper}>
+            <View style={styles.connectingWrapper}>
                 <Satoshi.Bold style={styles.title}>Connecting</Satoshi.Bold>
                 <Spinner />
             </View>
         );
     }
 
-    if (data.player_available === false) {
+    if (data.player_available == false) {
         return (
-            <View>
+            <View style={styles.connectingWrapper}>
                 <Satoshi.Bold style={styles.title}>
                     Looks like nothing is playing right now
                 </Satoshi.Bold>
@@ -305,13 +338,13 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
             SpotifyActions.pause(u.accessToken!.spotify).then(() => {
                 console.log('paused');
                 setPlayState(!playState);
-                mutate(); 
+                mutate();
             });
         } else {
             SpotifyActions.play(u.accessToken!.spotify).then(() => {
                 console.log('playing');
                 setPlayState(!playState);
-                mutate(); 
+                mutate();
             });
         }
     };
@@ -433,6 +466,13 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
 export default CurrentlyPlaying;
 
 const styles = StyleSheet.create({
+    //Connecting and no song
+    connectingWrapper: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+    },
     //CP widget
     wrapper: {
         width: '100%',

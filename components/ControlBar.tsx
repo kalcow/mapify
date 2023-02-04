@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         marginHorizontal: 30,
     },
-    lottieWrapper: {},
 });
 
 export default ControlBar;
