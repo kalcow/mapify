@@ -12,6 +12,7 @@ import Animated, {
     withTiming,
     useAnimatedSensor,
     SensorType,
+    Easing
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
@@ -27,6 +28,7 @@ import ImageColors from 'react-native-image-colors';
 //!development
 import isExpoGo from '../lib/isExpoGo';
 import Spinner from './Spinner';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 const API_ENDPOINT = 'https://mapify-server.fly.dev/player';
 
@@ -91,24 +93,29 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
 
     const animatedSensor = useAnimatedSensor(SensorType.ROTATION, {
         interval: 10,
-        
     });
 
     const style = useAnimatedStyle(() => {
-        const { pitch, roll } = animatedSensor.sensor.value;
+        const { pitch, roll, yaw } = animatedSensor.sensor.value;
 
-        const min = -10;
-        const max = 10; 
-        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max); 
+        const min = -20;
+        const max = 20;
+        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
-        let rollValue = clamp(0.2 * (180/Math.PI) * roll, min, max);
-        let pitchValue = clamp(0.2 * (((180/Math.PI) * pitch) - 90), min, max); 
-        
+        let rollValue = clamp(0.2 * (180 / Math.PI) * roll, min, max);
+        let pitchValue = clamp(0.2 * ((180 / Math.PI) * pitch), -10, 10);
+        let yawValue = clamp(0.2 * ((180 / Math.PI) * yaw), -5, 5); //30 * (yaw < 0 ? 2.5 * Number(yaw.toFixed(2)) : Number(yaw.toFixed(2)));
+
         return {
-            transform: [{ perspective: 1000 }, { rotateY: withTiming(`${-rollValue}deg`, {duration: 10}) }, { rotateX: withTiming(`${pitchValue}deg`, {duration: 10}) }],
+            transform: [
+                { perspective: 1000 },
+                { rotateY: withTiming(`${-rollValue}deg`, { duration: 10}) },
+                { rotateX: withTiming(`${pitchValue}deg`, { duration: 10 }) },
+            ],
         };
-
     });
+
+
 
     return (
         <Modal
@@ -150,17 +157,19 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
                                 <Icons.Analytics />
                             </TouchableOpacity>
                         </View>
-                        <Image
-                            style={[
-                                {
-                                    maxWidth: '100%',
-                                    aspectRatio: 1,
-                                    borderRadius: 16,
-                                },
-                                // style,
-                            ]}
-                            source={{ uri: data.item.album.images[0].url }}
-                        />
+                        {/* <GestureDetector gesture={rotationGesture}> */}
+                            <Animated.Image
+                                style={[
+                                    {
+                                        maxWidth: '100%',
+                                        aspectRatio: 1,
+                                        borderRadius: 16,
+                                    },
+                                    style,
+                                ]}
+                                source={{ uri: data.item.album.images[0].url }}
+                            />
+                        {/* </GestureDetector> */}
                         <View style={[styles.songDetailWrapper, { opacity: loadingSF ? 0.5 : 1 }]}>
                             <Satoshi.Black style={styles.songTitle}>{data.item.name}</Satoshi.Black>
                             <Satoshi.Medium style={styles.songArtists}>{artists}</Satoshi.Medium>

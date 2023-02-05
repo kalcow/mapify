@@ -9,6 +9,7 @@ import Colors from './constants/colors';
 import InitialFlow from './routers/InitialFlow';
 import BottomTabNavigation from './routers/BottomTabNavigation';
 import UserWrapper from './context/user';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
     const isLoadingComplete = useCachedResources();
@@ -17,14 +18,16 @@ export default function App() {
         return null;
     } else {
         return (
-            <UserWrapper>
-                <View style={{ flex: 1, backgroundColor: Colors.blackBase }}>
-                    <NavigationContainer theme={DarkTheme}>
-                        <StatusBar style="light" />
-                        <InitialFlow />
-                    </NavigationContainer>
-                </View>
-            </UserWrapper>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <UserWrapper>
+                    <View style={{ flex: 1, backgroundColor: Colors.blackBase }}>
+                        <NavigationContainer theme={DarkTheme}>
+                            <StatusBar style="light" />
+                            <InitialFlow />
+                        </NavigationContainer>
+                    </View>
+                </UserWrapper>
+            </GestureHandlerRootView>
         );
     }
 }
