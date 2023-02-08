@@ -20,7 +20,7 @@ import Animated, {
 
 //* Screens
 import Home from '../screens/Home';
-import Map from '../screens/Map';
+import Map from '../components/Globe_development';
 import Library from '../screens/Library';
 import Discover from '../screens/Discover';
 
