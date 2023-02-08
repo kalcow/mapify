@@ -476,9 +476,9 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
                 source={{ uri: data.item.album.images[0].url }}
             />
             <View style={styles.textWrapper}>
-                <TouchableOpacity onPress={onOpen}>
+                {/* <TouchableOpacity onPress={onOpen}>
                     <Satoshi.Bold>Open the modal</Satoshi.Bold>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <View style={styles.textContainer}>
                     <TouchableOpacity
                         onPress={() => {
