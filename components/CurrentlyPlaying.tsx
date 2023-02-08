@@ -12,7 +12,7 @@ import Animated, {
     withTiming,
     useAnimatedSensor,
     SensorType,
-    Easing
+    Easing,
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icons from '../constants/Icons';
 import ControlBar from './ControlBar';
 import { Slider } from '@miblanchard/react-native-slider';
+import { Modalize } from 'react-native-modalize';
 
 //!Native Dependencies
 import ImageColors from 'react-native-image-colors';
@@ -28,7 +29,7 @@ import ImageColors from 'react-native-image-colors';
 //!development
 import isExpoGo from '../lib/isExpoGo';
 import Spinner from './Spinner';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { Directions, Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 const API_ENDPOINT = 'https://mapify-server.fly.dev/player';
 
@@ -95,27 +96,55 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
         interval: 10,
     });
 
+    const rightFling = Gesture.Fling()
+        .direction(Directions.RIGHT)
+        .onStart((e) => {
+            console.log(e);
+            setLoadingSF(true);
+            SpotifyActions.skipBack(u.accessToken!.spotify).then(() => {
+                mutate();
+                console.log('skipped song');
+            });
+        })
+        .runOnJS(true);
+
+    const leftFling = Gesture.Fling()
+        .direction(Directions.LEFT)
+        .onStart(() => {
+            setLoadingSF(true);
+            SpotifyActions.skipForward(u.accessToken!.spotify).then(() => {
+                mutate();
+                console.log('skipped song');
+            });
+        })
+        .runOnJS(true);
+
+    const downFling = Gesture.Fling()
+        .direction(Directions.DOWN)
+        .onEnd(() => {
+            setModalVisible(!modalVisible);
+        })
+        .runOnJS(true);
+
     const style = useAnimatedStyle(() => {
         const { pitch, roll, yaw } = animatedSensor.sensor.value;
 
-        const min = -20;
-        const max = 20;
+        const min = -10;
+        const max = 10;
         const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
-        let rollValue = clamp(0.2 * (180 / Math.PI) * roll, min, max);
+        let rollValue = clamp(0.2 * (180 / Math.PI) * roll, -5, 5);
         let pitchValue = clamp(0.2 * ((180 / Math.PI) * pitch), -10, 10);
         let yawValue = clamp(0.2 * ((180 / Math.PI) * yaw), -5, 5); //30 * (yaw < 0 ? 2.5 * Number(yaw.toFixed(2)) : Number(yaw.toFixed(2)));
 
         return {
             transform: [
                 { perspective: 1000 },
-                { rotateY: withTiming(`${-rollValue}deg`, { duration: 10}) },
+                { rotateY: withTiming(`${-rollValue}deg`, { duration: 10 }) },
                 { rotateX: withTiming(`${pitchValue}deg`, { duration: 10 }) },
             ],
         };
     });
-
-
 
     return (
         <Modal
@@ -125,133 +154,151 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
             onRequestClose={() => {
                 setModalVisible(!modalVisible);
             }}>
-            <Animated.View style={styles.ModalWrapper} layout={Layout.duration(200)}>
-                {
-                    <LinearGradient
-                        colors={[dominantColor, Colors.blackBase]}
-                        style={styles.colorBlock}
-                    />
-                }
-                <View
-                    style={[
-                        styles.ModalContainer,
-                        { paddingTop: insets.top, paddingBottom: insets.bottom },
-                    ]}>
-                    <View>
-                        <View style={styles.cpHeader}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setModalVisible(!modalVisible);
-                                }}>
-                                <Icons.DownChevron />
-                            </TouchableOpacity>
-                            <Animated.View
-                                layout={Layout.duration(200)}
-                                style={styles.cpHeaderTextWrapper}>
-                                <Satoshi.Bold style={styles.cpHeaderText}>
-                                    Currently Playing
-                                </Satoshi.Bold>
-                                {loadingSF && <Spinner />}
-                            </Animated.View>
-                            <TouchableOpacity>
-                                <Icons.Analytics />
-                            </TouchableOpacity>
-                        </View>
-                        {/* <GestureDetector gesture={rotationGesture}> */}
-                            <Animated.Image
+            <GestureDetector gesture={rightFling}>
+                <GestureDetector gesture={leftFling}>
+                    <GestureDetector gesture={downFling}>
+                        <Animated.View style={styles.ModalWrapper} layout={Layout.duration(200)}>
+                            {
+                                <LinearGradient
+                                    colors={[dominantColor, Colors.blackBase]}
+                                    style={styles.colorBlock}
+                                />
+                            }
+                            <View
                                 style={[
-                                    {
-                                        maxWidth: '100%',
-                                        aspectRatio: 1,
-                                        borderRadius: 16,
-                                    },
-                                    style,
-                                ]}
-                                source={{ uri: data.item.album.images[0].url }}
-                            />
-                        {/* </GestureDetector> */}
-                        <View style={[styles.songDetailWrapper, { opacity: loadingSF ? 0.5 : 1 }]}>
-                            <Satoshi.Black style={styles.songTitle}>{data.item.name}</Satoshi.Black>
-                            <Satoshi.Medium style={styles.songArtists}>{artists}</Satoshi.Medium>
-                            <View style={styles.device}>
-                                <Svg width={9} height={11} style={{ marginRight: 3 }} fill="none">
-                                    <Path
-                                        d="M4.5 2.8h.004M1.875 1h5.25c.483 0 .875.403.875.9v7.2c0 .497-.392.9-.875.9h-5.25A.888.888 0 0 1 1 9.1V1.9c0-.497.392-.9.875-.9ZM6.25 6.4c0 .994-.784 1.8-1.75 1.8s-1.75-.806-1.75-1.8.784-1.8 1.75-1.8 1.75.806 1.75 1.8Z"
-                                        stroke={Colors.textTwo}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </Svg>
-                                <Satoshi.Medium style={styles.artists}>
-                                    Playing from {data.device.name}
-                                </Satoshi.Medium>
-                            </View>
-                        </View>
-                    </View>
-                    <View>
-                        <View style={[styles.waveformWrapper, { width: width }]}>
-                            {bars}
-                            <Slider
-                                value={sliderValue}
-                                onValueChange={(number) => {
-                                    sliding
-                                        ? //@ts-ignore
-                                          setSliderValue(number[0])
-                                        : setSliderValue(percentDuration / width);
-                                }}
-                                maximumTrackTintColor="rgba(0, 0, 0, 0)"
-                                minimumTrackTintColor="rgba(0, 0, 0, 0)"
-                                renderThumbComponent={() => {
-                                    return (
+                                    styles.ModalContainer,
+                                    { paddingTop: insets.top, paddingBottom: insets.bottom },
+                                ]}>
+                                <View>
+                                    <View style={styles.cpHeader}>
                                         <TouchableOpacity
-                                            style={{
-                                                width: 4,
-                                                height: 65,
-                                                backgroundColor: Colors.text,
-                                                borderRadius: 4,
-                                                position: 'relative',
+                                            onPress={() => {
+                                                setModalVisible(!modalVisible);
                                             }}>
-                                            {/* <View style={{width: 8, height: 8, backgroundColor: Colors.text, borderRadius: 8, bottom: -5, left: -2, position: 'absolute'}}/> */}
+                                            <Icons.DownChevron />
                                         </TouchableOpacity>
-                                    );
-                                }}
-                                containerStyle={styles.sliderContainer}
-                                onSlidingComplete={(duration: number[] | number) => {
-                                    setSliding(true);
-                                    setLoadingSF(true);
-                                    SpotifyActions.seek(
-                                        u.accessToken!.spotify,
-                                        //@ts-ignore
-                                        Math.floor(duration[0] * data.item.duration_ms)
-                                    ).then(() => {
-                                        mutate();
-                                        setTimeout(() => {
-                                            setSliding(false);
-                                        }, 3000);
-                                    });
-                                }}
-                                onSlidingStart={() => {
-                                    setSliding(true);
-                                }}
-                            />
-                        </View>
-                        <View style={styles.songTimeStampWrapper}>
-                            <Satoshi.Regular style={styles.songTimeStamp}>
-                                {ms_to_string(data.progress_ms)}
-                            </Satoshi.Regular>
-                            <Satoshi.Regular style={styles.songTimeStamp}>
-                                {ms_to_string(data.item.duration_ms)}
-                            </Satoshi.Regular>
-                        </View>
-                        <ControlBar
-                            playPause={pause}
-                            SFState={[loadingSF, setLoadingSF]}
-                            data={data}
-                            mutate={mutate}
-                        />
-                    </View>
-                </View>
-            </Animated.View>
+                                        <Animated.View
+                                            layout={Layout.duration(200)}
+                                            style={styles.cpHeaderTextWrapper}>
+                                            <Satoshi.Bold style={styles.cpHeaderText}>
+                                                Currently Playing
+                                            </Satoshi.Bold>
+                                            {loadingSF && <Spinner />}
+                                        </Animated.View>
+                                        <TouchableOpacity>
+                                            <Icons.Analytics />
+                                        </TouchableOpacity>
+                                    </View>
+                                    {/* <GestureDetector gesture={rotationGesture}> */}
+                                    <Animated.Image
+                                        style={[
+                                            {
+                                                maxWidth: '100%',
+                                                aspectRatio: 1,
+                                                borderRadius: 16,
+                                            },
+                                            style,
+                                        ]}
+                                        source={{ uri: data.item.album.images[0].url }}
+                                    />
+                                    {/* </GestureDetector> */}
+                                    <View
+                                        style={[
+                                            styles.songDetailWrapper,
+                                            { opacity: loadingSF ? 0.5 : 1 },
+                                        ]}>
+                                        <Satoshi.Black style={styles.songTitle}>
+                                            {data.item.name}
+                                        </Satoshi.Black>
+                                        <Satoshi.Medium style={styles.songArtists}>
+                                            {artists}
+                                        </Satoshi.Medium>
+                                        <View style={styles.device}>
+                                            <Svg
+                                                width={9}
+                                                height={11}
+                                                style={{ marginRight: 3 }}
+                                                fill="none">
+                                                <Path
+                                                    d="M4.5 2.8h.004M1.875 1h5.25c.483 0 .875.403.875.9v7.2c0 .497-.392.9-.875.9h-5.25A.888.888 0 0 1 1 9.1V1.9c0-.497.392-.9.875-.9ZM6.25 6.4c0 .994-.784 1.8-1.75 1.8s-1.75-.806-1.75-1.8.784-1.8 1.75-1.8 1.75.806 1.75 1.8Z"
+                                                    stroke={Colors.textTwo}
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </Svg>
+                                            <Satoshi.Medium style={styles.artists}>
+                                                Playing from {data.device.name}
+                                            </Satoshi.Medium>
+                                        </View>
+                                    </View>
+                                </View>
+                                <View>
+                                    <View style={[styles.waveformWrapper, { width: width }]}>
+                                        {bars}
+                                        <Slider
+                                            value={sliderValue}
+                                            onValueChange={(number) => {
+                                                sliding
+                                                    ? //@ts-ignore
+                                                      setSliderValue(number[0])
+                                                    : setSliderValue(percentDuration / width);
+                                            }}
+                                            maximumTrackTintColor="rgba(0, 0, 0, 0)"
+                                            minimumTrackTintColor="rgba(0, 0, 0, 0)"
+                                            renderThumbComponent={() => {
+                                                return (
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            width: 4,
+                                                            height: 65,
+                                                            backgroundColor: Colors.text,
+                                                            borderRadius: 4,
+                                                            position: 'relative',
+                                                        }}>
+                                                        {/* <View style={{width: 8, height: 8, backgroundColor: Colors.text, borderRadius: 8, bottom: -5, left: -2, position: 'absolute'}}/> */}
+                                                    </TouchableOpacity>
+                                                );
+                                            }}
+                                            containerStyle={styles.sliderContainer}
+                                            onSlidingComplete={(duration: number[] | number) => {
+                                                setSliding(true);
+                                                setLoadingSF(true);
+                                                SpotifyActions.seek(
+                                                    u.accessToken!.spotify,
+                                                    //@ts-ignore
+                                                    Math.floor(duration[0] * data.item.duration_ms)
+                                                ).then(() => {
+                                                    mutate();
+                                                    setTimeout(() => {
+                                                        setSliding(false);
+                                                    }, 3000);
+                                                });
+                                            }}
+                                            onSlidingStart={() => {
+                                                setSliding(true);
+                                            }}
+                                        />
+                                    </View>
+                                    <View style={styles.songTimeStampWrapper}>
+                                        <Satoshi.Regular style={styles.songTimeStamp}>
+                                            {ms_to_string(data.progress_ms)}
+                                        </Satoshi.Regular>
+                                        <Satoshi.Regular style={styles.songTimeStamp}>
+                                            {ms_to_string(data.item.duration_ms)}
+                                        </Satoshi.Regular>
+                                    </View>
+                                    <ControlBar
+                                        playPause={pause}
+                                        SFState={[loadingSF, setLoadingSF]}
+                                        data={data}
+                                        mutate={mutate}
+                                    />
+                                </View>
+                            </View>
+                        </Animated.View>
+                    </GestureDetector>
+                </GestureDetector>
+            </GestureDetector>
         </Modal>
     );
 };
@@ -266,6 +313,12 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [dominantColor, setDominantColor] = useState<string | undefined>('#000');
     const [loadingSF, setLoadingSF] = useState<boolean>(false);
+    // const modalizeRef = useRef<Modalize>(null);
+    
+
+    const onOpen = () => {
+        u!.currentlyPlayingModal?.ref.current?.open();
+    };
 
     useEffect(() => {
         if (data !== undefined && data.player_available) {
@@ -423,6 +476,9 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
                 source={{ uri: data.item.album.images[0].url }}
             />
             <View style={styles.textWrapper}>
+                <TouchableOpacity onPress={onOpen}>
+                    <Satoshi.Bold>Open the modal</Satoshi.Bold>
+                </TouchableOpacity>
                 <View style={styles.textContainer}>
                     <TouchableOpacity
                         onPress={() => {
