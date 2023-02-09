@@ -39,6 +39,7 @@ const Login = (props: Props) => {
                     'user-read-currently-playing',
                     'user-read-playback-state',
                     'user-modify-playback-state',
+                    'user-read-recently-played', 
                 ].join(' '),
             },
         };
