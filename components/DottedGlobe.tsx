@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, Touchable, TouchableOpacity, View } from 'react-native';
 import { Renderer } from 'expo-three';
 import { GLView } from 'expo-gl';
 import {
@@ -23,8 +23,18 @@ import SimpleTween from 'react-native-simple-tween';
 import Colors from '../constants/colors';
 
 import data from './map_img_data.json';
+import { useEffect, useState } from 'react';
+import Satoshi from '../constants/Satoshi';
 
 export default function DottedGlobe() {
+    const [rotate, setRotate] = useState(true); 
+
+    useEffect(() => {
+        console.log('rotate changed'); 
+    }, [rotate])
+
+
+
     const onContextCreate = async (gl: any) => {
         const scene = new Scene();
         const earthContainer = new Group();
@@ -128,6 +138,10 @@ export default function DottedGlobe() {
                 lat: 17.385,
                 long: 78.4867,
             },
+            hawaii: {
+                lat: 19.8968, 
+                long: -155.5828, 
+            }
         };
 
         let exactLat = locations.cos.lat;
@@ -153,8 +167,6 @@ export default function DottedGlobe() {
         tween.setEasing(SimpleTween.Easing.Quadratic.InOut);
 
         tween.start();
-
-        let rotate = true;
 
         const render = () => {
             requestAnimationFrame(render);
@@ -207,7 +219,7 @@ export default function DottedGlobe() {
 
             //@ts-ignore
             const s = calc_pos(nearestLat, nearestLong, GLOBE_RADIUS);
-            e.position.set(s.x * 1.002, s.y * 1.002, s.z * 1.002);
+            e.position.set(s.x * 1.003, s.y * 1.003, s.z * 1.003);
             //@ts-ignore
             const o = calc_pos(nearestLat, nearestLong, GLOBE_RADIUS + 5);
             e.lookAt(o.x, o.y, o.z);
@@ -247,7 +259,7 @@ export default function DottedGlobe() {
                     if (!visibilityForCoordinate(lng, lat, d)) continue;
                     //@ts-ignore
                     const s = calc_pos(lat, lng, GLOBE_RADIUS);
-                    e.position.set(s.x * 1.001, s.y * 1.001, s.z * 1.001);
+                    e.position.set(s.x * 1.002, s.y * 1.002, s.z * 1.002);
                     //@ts-ignore
                     const o = calc_pos(lat, lng, GLOBE_RADIUS + 5);
                     e.lookAt(o.x, o.y, o.z);
@@ -301,6 +313,11 @@ export default function DottedGlobe() {
     };
     return (
         <View style={styles.container}>
+            {/* <TouchableOpacity onPress={() => {
+                setRotate(!rotate)
+            }} >
+                <Satoshi.Black style={{color: 'white', paddingTop: 50}}>rotate</Satoshi.Black>
+            </TouchableOpacity> */}
             <GLView
                 onContextCreate={onContextCreate}
                 // set height and width of GLView

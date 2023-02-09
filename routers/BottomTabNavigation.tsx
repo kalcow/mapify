@@ -23,10 +23,11 @@ import Discover from '../screens/Discover';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs/lib/typescript/src/types';
 import Satoshi from '../constants/Satoshi';
 import CurrentlyPlaying from '../components/CurrentlyPlaying';
+import DottedGlobe from '../components/DottedGlobe';
 
 const TabData = [
     { route: 'Map', label: 'Map', icon: BottomTabIcons.Map, component: Map },
-    { route: 'Discover', label: 'Discover', icon: BottomTabIcons.Compass, component: Discover },
+    { route: 'Discover', label: 'Discover', icon: BottomTabIcons.Compass, component: DottedGlobe },
     { route: 'Home', label: 'Home', icon: BottomTabIcons.Home, component: Home },
     { route: 'Library', label: 'Library', icon: BottomTabIcons.Library, component: Library },
     { route: 'Rooms', label: 'Rooms', icon: BottomTabIcons.Rooms, component: Library },
