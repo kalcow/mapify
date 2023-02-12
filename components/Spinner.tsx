@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import LottieView from 'lottie-react-native';
 
 const Spinner = () => {
@@ -15,19 +15,21 @@ const Spinner = () => {
                 style={{
                     transform: [{ translateX: -24 }, { translateY: -6 }],
                 }}>
-                <LottieView
-                    autoPlay
-                    loop
-                    style={{
-                        width: 36,
-                        height: 36,
-                        backgroundColor: 'rgba(0, 0, 0, 0)',
-                    }}
-                    source={require('../assets/loading_spinner.json')}
-                />
+                {Platform.OS !== 'android' && (
+                    <LottieView
+                        autoPlay
+                        loop
+                        style={{
+                            width: 36,
+                            height: 36,
+                            backgroundColor: 'rgba(0, 0, 0, 0)',
+                        }}
+                        source={require('../assets/loading_spinner.json')}
+                    />
+                )}
             </View>
         </View>
     );
 };
 
-export default Spinner; 
+export default Spinner;
