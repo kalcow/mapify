@@ -25,7 +25,7 @@ export default function App() {
                             <StatusBar style="light" />
                             <InitialFlow />
                         </NavigationContainer>
-                        <ModalWrapper/>
+                        {/* <ModalWrapper/> */}
                     </View>
                 </UserWrapper>
             </GestureHandlerRootView>
