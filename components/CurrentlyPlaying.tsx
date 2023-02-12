@@ -98,6 +98,36 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
           })
         : null;
 
+    const rightFling = Gesture.Fling()
+        .direction(Directions.RIGHT)
+        .onStart((e) => {
+            console.log(e);
+            setLoadingSF(true);
+            SpotifyActions.skipBack(u.accessToken!.spotify).then(() => {
+                mutate();
+                console.log('skipped song');
+            });
+        })
+        .runOnJS(true);
+
+    const leftFling = Gesture.Fling()
+        .direction(Directions.LEFT)
+        .onStart(() => {
+            setLoadingSF(true);
+            SpotifyActions.skipForward(u.accessToken!.spotify).then(() => {
+                mutate();
+                console.log('skipped song');
+            });
+        })
+        .runOnJS(true);
+
+    const downFling = Gesture.Fling()
+        .direction(Directions.DOWN)
+        .onEnd(() => {
+            setModalVisible(!modalVisible);
+        })
+        .runOnJS(true);
+
     const style = useAnimatedStyle(() => {
         if (animatedSensor !== null) {
             const { pitch, roll } = animatedSensor.sensor.value;
@@ -292,7 +322,6 @@ const CurrentlyPlaying: FC<CurrentlyPlaying> = () => {
     const [dominantColor, setDominantColor] = useState<string | undefined>('#000');
     const [loadingSF, setLoadingSF] = useState<boolean>(false);
     // const modalizeRef = useRef<Modalize>(null);
-    
 
     const onOpen = () => {
         u!.currentlyPlayingModal?.ref.current?.open();
