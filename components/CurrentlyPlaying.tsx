@@ -92,7 +92,7 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
         }
     }, [percentDuration]);
 
-    const animatedSensor = isAndroid
+    const animatedSensor = !isAndroid
         ? useAnimatedSensor(SensorType.ROTATION, {
               interval: 10,
           })
