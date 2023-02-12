@@ -27,11 +27,13 @@ import { useEffect, useState } from 'react';
 import Satoshi from '../constants/Satoshi';
 
 export default function DottedGlobe() {
-    const [rotate, setRotate] = useState(true);
+    const [rotate, setRotate] = useState(true); 
 
     useEffect(() => {
-        console.log('rotate changed');
-    }, [rotate]);
+        console.log('rotate changed'); 
+    }, [rotate])
+
+
 
     const onContextCreate = async (gl: any) => {
         const scene = new Scene();
@@ -121,7 +123,7 @@ export default function DottedGlobe() {
         earthContainer.rotation.y = -Math.PI / 2;
         earthContainer.add(earth);
 
-        scene.rotateZ((23.5 / 2) * DEG2RAD);
+        scene.rotateZ(23.5/2 * DEG2RAD)
 
         const locations = {
             la: {
@@ -137,9 +139,9 @@ export default function DottedGlobe() {
                 long: 78.4867,
             },
             hawaii: {
-                lat: 19.8968,
-                long: -155.5828,
-            },
+                lat: 19.8968, 
+                long: -155.5828, 
+            }
         };
 
         let exactLat = locations.cos.lat;
@@ -158,6 +160,7 @@ export default function DottedGlobe() {
             x: (exactLat * Math.PI) / 180,
             y: (-exactLong - 90) * DEG2RAD,
         };
+
 
         const tween = new SimpleTween(from, to, 1000);
         tween.setDuration(2000);
@@ -191,11 +194,6 @@ export default function DottedGlobe() {
 
         function draw_location_dot() {
             const e = new Object3D();
-            //@ts-ignore
-            const dot = new CircleGeometry(worldDotSize * 2, 1000),
-                dot_mat = new MeshStandardMaterial({
-                    color: Colors.accentColor,
-                });
 
             const possibleLats: number[] = [];
             for (let lat = -90; lat <= 90; lat += 180 / worldDotRows) {
@@ -224,10 +222,13 @@ export default function DottedGlobe() {
             e.position.set(s.x * 1.003, s.y * 1.003, s.z * 1.003);
             //@ts-ignore
             const o = calc_pos(nearestLat, nearestLong, GLOBE_RADIUS + 5);
-            // const lookAtPoint = new Vector3(o.x, o.y, o.z);
-            // dot.lookAt(lookAtPoint);
             e.lookAt(o.x, o.y, o.z);
             e.updateMatrix();
+
+            const dot = new CircleGeometry(worldDotSize * 2, 1000),
+                dot_mat = new MeshStandardMaterial({
+                    color: Colors.accentColor,
+                });
 
             const i_mesh = new InstancedMesh(dot, dot_mat, 1);
             i_mesh.setMatrixAt(0, e.matrix);
