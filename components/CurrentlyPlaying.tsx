@@ -27,7 +27,7 @@ import { Modalize } from 'react-native-modalize';
 import ImageColors from 'react-native-image-colors';
 
 //!development
-import isExpoGo from '../lib/isExpoGo';
+import isExpoGo, { isAndroid } from '../lib/isExpoGo';
 import Spinner from './Spinner';
 import { Directions, Gesture, GestureDetector } from 'react-native-gesture-handler';
 
@@ -92,57 +92,35 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
         }
     }, [percentDuration]);
 
-    const animatedSensor = useAnimatedSensor(SensorType.ROTATION, {
-        interval: 10,
-    });
-
-    const rightFling = Gesture.Fling()
-        .direction(Directions.RIGHT)
-        .onStart((e) => {
-            console.log(e);
-            setLoadingSF(true);
-            SpotifyActions.skipBack(u.accessToken!.spotify).then(() => {
-                mutate();
-                console.log('skipped song');
-            });
-        })
-        .runOnJS(true);
-
-    const leftFling = Gesture.Fling()
-        .direction(Directions.LEFT)
-        .onStart(() => {
-            setLoadingSF(true);
-            SpotifyActions.skipForward(u.accessToken!.spotify).then(() => {
-                mutate();
-                console.log('skipped song');
-            });
-        })
-        .runOnJS(true);
-
-    const downFling = Gesture.Fling()
-        .direction(Directions.DOWN)
-        .onEnd(() => {
-            setModalVisible(!modalVisible);
-        })
-        .runOnJS(true);
+    const animatedSensor = isAndroid
+        ? useAnimatedSensor(SensorType.ROTATION, {
+              interval: 10,
+          })
+        : null;
 
     const style = useAnimatedStyle(() => {
-        const { pitch, roll, yaw } = animatedSensor.sensor.value;
+        if (animatedSensor !== null) {
+            const { pitch, roll } = animatedSensor.sensor.value;
 
-        const min = -10;
-        const max = 10;
-        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
+            const min = -10;
+            const max = 10;
+            const clamp = (num: number, min: number, max: number) =>
+                Math.min(Math.max(num, min), max);
 
-        let rollValue = clamp(0.2 * (180 / Math.PI) * roll, -5, 5);
-        let pitchValue = clamp(0.2 * ((180 / Math.PI) * pitch), -10, 10);
-        let yawValue = clamp(0.2 * ((180 / Math.PI) * yaw), -5, 5); //30 * (yaw < 0 ? 2.5 * Number(yaw.toFixed(2)) : Number(yaw.toFixed(2)));
+            let rollValue = clamp(0.2 * (180 / Math.PI) * roll, min, max);
+            let pitchValue = clamp(0.2 * ((180 / Math.PI) * pitch - 90), min, max);
+
+            return {
+                transform: [
+                    { perspective: 1000 },
+                    { rotateY: withTiming(`${-rollValue}deg`, { duration: 10 }) },
+                    { rotateX: withTiming(`${pitchValue}deg`, { duration: 10 }) },
+                ],
+            };
+        }
 
         return {
-            transform: [
-                { perspective: 1000 },
-                { rotateY: withTiming(`${-rollValue}deg`, { duration: 10 }) },
-                { rotateX: withTiming(`${pitchValue}deg`, { duration: 10 }) },
-            ],
+            transform: [],
         };
     });
 

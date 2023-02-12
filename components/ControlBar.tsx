@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Icons from '../constants/Icons';
 import Svg, { Path } from 'react-native-svg';
 import SpotifyActions from '../lib/spotify';
