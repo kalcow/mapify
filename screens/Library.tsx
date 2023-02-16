@@ -14,6 +14,8 @@ import useSWR from 'swr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from '../components/Button';
 
+import SpotifyActions from '../lib/spotify';
+
 import { useUserState } from '../context/user';
 const API_ENDPOINT = 'https://mapify-server.fly.dev/player';
 
@@ -71,6 +73,12 @@ export default function Library() {
         );
     }
 
+    const playTrack = (uri: string) => {
+        SpotifyActions.playSong(u.accessToken!.spotify, uri).then((r) => {
+            console.log('success: ' + uri);
+        });
+    };
+
     return (
         <View style={styles.container}>
             <Satoshi.Bold style={styles.title}>Your Library</Satoshi.Bold>
@@ -88,7 +96,7 @@ export default function Library() {
                         <View style={styles.libraryItem}>
                             <TouchableOpacity
                                 onPress={() => {
-                                    alert('selected');
+                                    playTrack(item.album.uri);
                                 }}>
                                 <Image
                                     style={[

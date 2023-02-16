@@ -40,7 +40,6 @@ const putSpotifyData = async (endpoint: string, access_token: string) => {
 };
 
 const postSpotifyData = async (endpoint: string, access_token: string) => {
-
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -66,6 +65,20 @@ const SpotifyActions = {
         const response = await putSpotifyData(ENDPOINT, accessToken);
         return response;
     },
+    playSong: async (token: string, uri: string) => {
+        const ENDPOINT = `https://api.spotify.com/v1/me/player/play`;
+        const data = { context_uri: uri };
+        const r = await fetch(ENDPOINT, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return r;
+    },
     skipForward: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/next';
         const accessToken = token;
@@ -83,7 +96,7 @@ const SpotifyActions = {
         const accessToken = token;
         const response = await putSpotifyData(ENDPOINT, accessToken);
         return response;
-    }
+    },
 };
 
 export default SpotifyActions;
