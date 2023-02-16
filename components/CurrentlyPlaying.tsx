@@ -91,23 +91,25 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
 
     const animatedSensor = useAnimatedSensor(SensorType.ROTATION, {
         interval: 10,
-        
     });
 
     const style = useAnimatedStyle(() => {
         const { pitch, roll } = animatedSensor.sensor.value;
 
         const min = -10;
-        const max = 10; 
-        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max); 
+        const max = 10;
+        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
-        let rollValue = clamp(0.2 * (180/Math.PI) * roll, min, max);
-        let pitchValue = clamp(0.2 * (((180/Math.PI) * pitch) - 90), min, max); 
-        
+        let rollValue = clamp(0.2 * (180 / Math.PI) * roll, min, max);
+        let pitchValue = clamp(0.2 * ((180 / Math.PI) * pitch - 90), min, max);
+
         return {
-            transform: [{ perspective: 1000 }, { rotateY: withTiming(`${-rollValue}deg`, {duration: 10}) }, { rotateX: withTiming(`${pitchValue}deg`, {duration: 10}) }],
+            transform: [
+                { perspective: 1000 },
+                { rotateY: withTiming(`${-rollValue}deg`, { duration: 10 }) },
+                { rotateX: withTiming(`${pitchValue}deg`, { duration: 10 }) },
+            ],
         };
-
     });
 
     return (
