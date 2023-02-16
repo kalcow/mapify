@@ -7,8 +7,12 @@ import Globe from '../components/Globe';
 import Colors from '../constants/colors';
 import Satoshi from '../constants/Satoshi';
 import { supabase } from '../supabase/supabase';
+import Header from '../components/Header';
+
+//npx expo install react-native-dropdown-picker 
 
 export default function Home() {
+   // const [name, setName] = useState("Claire");
     const navigation = useNavigation();
     const SignOutOfSpotify = async () => {
         const { error } = await supabase.auth.signOut();
@@ -30,6 +34,10 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
+            <Header 
+                name="Claire"
+            />
+
             <Satoshi.Regular style={{ color: 'white' }}>Home</Satoshi.Regular>
             <Button text="Sign Out" onPress={() => SignOutOfSpotify()}></Button>
             <Button text='Get Refresh Token' onPress={() => {getToken()}}></Button>
