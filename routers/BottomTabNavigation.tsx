@@ -44,7 +44,7 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                 right: insets.right,
             }}>
             <View style={styles.songContainer}>
-                <CurrentlyPlaying/>
+                <CurrentlyPlaying />
             </View>
             <View style={styles.tabsContainer}>
                 {state.routes.map((route, index) => {
@@ -115,10 +115,10 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                                 )}
                                 {!isFocused && (
                                     <Animated.View
-									entering={FadeIn.duration(400).easing(
-										Easing.inOut(Easing.ease)
-									)}
-									exiting={FadeOut.duration(200)}>
+                                        entering={FadeIn.duration(400).easing(
+                                            Easing.inOut(Easing.ease)
+                                        )}
+                                        exiting={FadeOut.duration(200)}>
                                         {renderIcon !== undefined &&
                                             renderIcon({
                                                 focused: isFocused,
@@ -132,8 +132,7 @@ const TabBar: FC<BottomTabBarProps> = ({ state, descriptors, navigation, insets 
                                         entering={ZoomIn.duration(400).easing(
                                             Easing.inOut(Easing.ease)
                                         )}
-                                        exiting={ZoomOut.duration(200)}
-                                    >
+                                        exiting={ZoomOut.duration(200)}>
                                         <Satoshi.Bold
                                             style={{ ...styles.text, ...styles.activeText }}>
                                             {typeof label === 'string' ? label : ''}
@@ -167,7 +166,7 @@ const styles = StyleSheet.create({
         // height: 72,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 7, 
+        marginBottom: 7,
     },
     tabsContainer: {
         width: '100%',
