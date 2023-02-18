@@ -1,8 +1,8 @@
-import { View, Text, StyleSheet, Platform } from 'react-native';
-import React, { useState, useEffect } from 'react';
-import MapView, { Marker } from 'react-native-maps';
-
 import * as Location from 'expo-location';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import MapView, { Callout, Marker } from 'react-native-maps';
+const markerImg = require('../assets/map-elements/bagel.png');
 
 const Map = () => {
     const [position, setPosition] = useState<Location.LocationObject | null>(null);
@@ -55,8 +55,14 @@ const Map = () => {
                     coordinate={{
                         latitude: latitude_real,
                         longitude: longitude_real,
-                    }}
-                />
+                    }}>
+                    <View style={styles.marker}>
+                        <Image source={markerImg} style={styles.image} />
+                    </View>
+                    <Callout>
+                        <Text>Bagel Asf</Text>
+                    </Callout>
+                </Marker>
             </MapView>
         </View>
     );
@@ -71,6 +77,19 @@ const styles = StyleSheet.create({
     },
     map: {
         ...StyleSheet.absoluteFillObject,
+    },
+    marker: {
+        // backgroundColor: '#000000',
+        alignItems: 'center',
+        flex: 1,
+        height: Dimensions.get('window').height / 18,
+        width: Dimensions.get('window').width / 1,
+    },
+    image: {
+        flex: 1,
+        resizeMode: 'contain',
+        height: '100%',
+        width: '100%',
     },
 });
 
