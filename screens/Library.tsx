@@ -79,14 +79,23 @@ export default function Library() {
         });
     };
 
+    const LibraryHeader = () => {
+        return (
+            <View style={{ backgroundColor: Colors.blackBase }}>
+                <Satoshi.Bold style={styles.title}>Your Library</Satoshi.Bold>
+                <Satoshi.Regular style={{ color: 'white', paddingBottom: 20 }}>
+                    Displaying the user's first {data.limit} saved albums.
+                </Satoshi.Regular>
+            </View>
+        );
+    };
+
     return (
         <View style={styles.container}>
-            <Satoshi.Bold style={styles.title}>Your Library</Satoshi.Bold>
-            <Satoshi.Regular style={{ color: 'white', paddingBottom: 20 }}>
-                Displaying the user's first {data.limit} saved albums.
-            </Satoshi.Regular>
             <View style={styles.libraryView}>
                 <FlatList
+                    ListHeaderComponent={LibraryHeader}
+                    stickyHeaderIndices={[0]}
                     columnWrapperStyle={{ justifyContent: 'space-between' }}
                     contentContainerStyle={{ paddingBottom: 300 }}
                     numColumns={2}
