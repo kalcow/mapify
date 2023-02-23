@@ -83,14 +83,6 @@ const Map = () => {
                 {listLocals.map((value, index) => {
                     return <MapMarker key={index} longitude={value.long} latitude={value.lat} />;
                 })}
-
-                {/* coordinate={{
-                        latitude: latitude_real,
-                        longitude: longitude_real,
-                    }}> */}
-                {/* <View style={styles.marker}>
-                        <Image source={markerImg} style={styles.image} />
-                    </View> */}
             </MapView>
             <Callout>
                 <ScrollView horizontal={true} style={styles.friends}>
