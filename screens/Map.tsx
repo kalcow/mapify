@@ -1,7 +1,9 @@
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Image, Modal, StyleSheet, Text, View } from 'react-native';
+import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import MapView, { Callout, Marker } from 'react-native-maps';
+import MapMarker from '../components/MapMarker';
 const markerImg = require('../assets/map-elements/bagel.png');
 
 const Map = () => {
@@ -41,6 +43,33 @@ const Map = () => {
         //loading view
     }
 
+    let listLocals = [
+        {
+            lat: latitude_real,
+            long: longitude_real,
+            user: 'me',
+        },
+        {
+            lat: 34.06935,
+            long: -118.44468,
+            user: 'Kalyan',
+        },
+        {
+            lat: 34.07274,
+            long: -118.45425,
+            user: 'Madeline',
+        },
+        {
+            lat: 34.07423,
+            long: -118.45119,
+            user: 'Georgia',
+        },
+    ];
+
+    const renderItem = ({ item }) => (
+        <Text>{item.user}</Text>
+    )
+
     return (
         <View style={styles.container}>
             <MapView
@@ -48,22 +77,32 @@ const Map = () => {
                 region={{
                     latitude: latitude_real,
                     longitude: longitude_real,
-                    latitudeDelta: 0.005,
-                    longitudeDelta: 0.005,
+                    latitudeDelta: 0.016,
+                    longitudeDelta: 0.016,
                 }}>
-                <Marker
-                    coordinate={{
+                {listLocals.map((value, index) => {
+                    return <MapMarker key={index} longitude={value.long} latitude={value.lat} />;
+                })}
+
+                {/* coordinate={{
                         latitude: latitude_real,
                         longitude: longitude_real,
-                    }}>
-                    <View style={styles.marker}>
+                    }}> */}
+                {/* <View style={styles.marker}>
                         <Image source={markerImg} style={styles.image} />
-                    </View>
-                    <Callout>
-                        <Text>Bagel Asf</Text>
-                    </Callout>
-                </Marker>
+                    </View> */}
             </MapView>
+            <Callout>
+                <ScrollView horizontal={true} style={styles.friends}>
+                    <FlatList
+                        horizontal
+                        data={listLocals}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => index}
+                        showsHorizontalScrollIndicator={false}
+                    />
+                </ScrollView>
+            </Callout>
         </View>
     );
 };
@@ -90,6 +129,12 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         height: '100%',
         width: '100%',
+    },
+    friends: {
+        borderColor: 'transparent',
+        borderWidth: 0.0,
+        marginBottom: '40%',
+        backgroundColor: '#fff',
     },
 });
 
