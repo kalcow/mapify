@@ -1,13 +1,14 @@
 import * as Location from 'expo-location';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Dimensions, Image, Modal, StyleSheet, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import MapView, { Callout, Marker } from 'react-native-maps';
-import MapMarker from '../components/MapMarker';
+//import MapMarker from '../components/MapMarker';
 const markerImg = require('../assets/map-elements/bagel.png');
 
 const Map = () => {
     const [position, setPosition] = useState<Location.LocationObject | null>(null);
+    const mapRef = useRef(null);
 
     useEffect(() => {
         const requestPermissions = async () => {
@@ -66,25 +67,56 @@ const Map = () => {
         },
     ];
 
-    const renderItem = ({ item }) => (
-        <Text>{item.user}</Text>
-    )
+    const renderItem = ({ item }) => <Text>{item.user}</Text>;
+
+    const markerPressed = (region) => {
+        console.log('go to');
+        const goToPoint = {
+            longitude: region.longitude,
+            latitude: region.latitude,
+            latitudeDelta: region.latitudeDelta,
+            longitudeDelta: region.longitudeDelta,
+        };
+        mapRef.current.animateToRegion(goToPoint, 1000);
+    };
 
     return (
         <View style={styles.container}>
             <MapView
+                ref={mapRef}
                 style={styles.map}
                 region={{
                     latitude: latitude_real,
                     longitude: longitude_real,
                     latitudeDelta: 0.016,
                     longitudeDelta: 0.016,
-                }}>
+                }}
+                onPress={()=> markerPressed({
+                    latitude: latitude_real,
+                    longitude: longitude_real,
+                    latitudeDelta: 0.016,
+                    longitudeDelta: 0.016,
+                })}>
                 {listLocals.map((value, index) => {
-                    return <MapMarker key={index} longitude={value.long} latitude={value.lat} />;
+                    return (
+                        <Marker
+                            key={index}
+                            coordinate={{ latitude: value.lat, longitude: value.long }}
+                            title={value.user}
+                            onPress={() =>
+                                markerPressed({
+                                    latitude: value.lat,
+                                    longitude: value.long,
+                                    latitudeDelta: 0.01,
+                                    longitudeDelta: 0.01,
+                                })
+                            }
+                        />
+                    );
                 })}
             </MapView>
-            <Callout>
+
+            {/* <Callout>
                 <ScrollView horizontal={true} style={styles.friends}>
                     <FlatList
                         horizontal
@@ -94,7 +126,7 @@ const Map = () => {
                         showsHorizontalScrollIndicator={false}
                     />
                 </ScrollView>
-            </Callout>
+            </Callout> */}
         </View>
     );
 };
