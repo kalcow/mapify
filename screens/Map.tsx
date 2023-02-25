@@ -70,14 +70,23 @@ const Map = () => {
     const renderItem = ({ item }) => <Text>{item.user}</Text>;
 
     const markerPressed = (region) => {
-        console.log('go to');
+        //console.log(region.user);
         const goToPoint = {
-            longitude: region.longitude,
-            latitude: region.latitude,
-            latitudeDelta: region.latitudeDelta,
-            longitudeDelta: region.longitudeDelta,
+            longitude: longitude_real,
+            latitude: latitude_real,
+            latitudeDelta: .016,
+            longitudeDelta: .016,
         };
-        mapRef.current.animateToRegion(goToPoint, 1000);
+        console.log()
+        if (region.marker === 'marker-press') {
+            goToPoint.longitude = region.coordinate.longitude;
+            goToPoint.latitude = region.coordinate.latitude;
+            goToPoint.latitudeDelta = 0.01;
+            goToPoint.longitudeDelta = 0.01;
+
+        } 
+        
+        mapRef.current.animateToRegion(goToPoint, 500);
     };
 
     return (
@@ -91,26 +100,19 @@ const Map = () => {
                     latitudeDelta: 0.016,
                     longitudeDelta: 0.016,
                 }}
-                onPress={()=> markerPressed({
-                    latitude: latitude_real,
-                    longitude: longitude_real,
-                    latitudeDelta: 0.016,
-                    longitudeDelta: 0.016,
-                })}>
+               
+                onPress={(e) =>
+                    markerPressed({
+                        coordinate: e.nativeEvent.coordinate,
+                        marker: e.nativeEvent.action,
+                    })
+                }>
                 {listLocals.map((value, index) => {
                     return (
                         <Marker
                             key={index}
                             coordinate={{ latitude: value.lat, longitude: value.long }}
                             title={value.user}
-                            onPress={() =>
-                                markerPressed({
-                                    latitude: value.lat,
-                                    longitude: value.long,
-                                    latitudeDelta: 0.01,
-                                    longitudeDelta: 0.01,
-                                })
-                            }
                         />
                     );
                 })}
