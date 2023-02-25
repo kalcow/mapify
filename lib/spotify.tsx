@@ -79,6 +79,32 @@ const SpotifyActions = {
         });
         return r;
     },
+
+    getAlbumSongs: async (token: string, album_id: string) => {
+        //console.log(token);
+        const idlink = JSON.stringify(album_id.URI).replace(/['"]+/g, '');
+
+        const ENDPOINT = `https://api.spotify.com/v1/albums/${idlink}/tracks`;
+
+        var data;
+        fetch(ENDPOINT, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log('DATA: ', data);
+                return data;
+            })
+            .catch((error) => {
+                return error;
+            });
+    },
+
     skipForward: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/next';
         const accessToken = token;
