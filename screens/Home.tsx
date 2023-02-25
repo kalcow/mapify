@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView} from 'react-native';
 import Button from '../components/Button';
 import Globe from '../components/Globe';
 import Colors from '../constants/colors';
@@ -33,15 +33,14 @@ export default function Home() {
     };
 
     return (
-        <View style={styles.container}>
-            <Header 
+        <SafeAreaView style={styles.container}>
+            <Header
                 name="Claire"
             />
-
             <Satoshi.Regular style={{ color: 'white' }}>Home</Satoshi.Regular>
             <Button text="Sign Out" onPress={() => SignOutOfSpotify()}></Button>
             <Button text='Get Refresh Token' onPress={() => {getToken()}}></Button>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -50,6 +49,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.blackBase,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
     },
+
+    header:{
+        
+    }
 });
