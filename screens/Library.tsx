@@ -30,6 +30,8 @@ import SpotifyActions from '../lib/spotify';
 import { useUserState } from '../context/user';
 const API_ENDPOINT = 'https://mapify-server.fly.dev/player';
 
+import { useNavigation } from '@react-navigation/native';
+
 import BottomTabIcons from '../constants/BottomTabIcons';
 
 export default function Library(state, navigation) {
@@ -103,12 +105,15 @@ export default function Library(state, navigation) {
         modalVisible: boolean;
     }
 
-    const SongListModal = (album_id: string) => {
+    const SongListModal = (album_id: string, album: JSON) => {
         let ScreenHeight = Dimensions.get('window').height;
 
+        console.log(album);
+
+        var songs;
+
         SpotifyActions.getAlbumSongs(u.accessToken!.spotify, album_id).then((data) => {
-            console.log(data);
-            console.log('DATA OBTAINED: ', data.json());
+            songs = data.items;
         });
 
         return (
@@ -118,7 +123,7 @@ export default function Library(state, navigation) {
                 style={{ ...styles.modalThing, height: ScreenHeight }}>
                 <View style={styles.modalWrapper}>
                     <View style={styles.modal}>
-                        <Satoshi.Bold style={styles.title}>Song Title</Satoshi.Bold>
+                        <Satoshi.Bold style={styles.title}>Album Name</Satoshi.Bold>
                         <TouchableOpacity
                             onPress={() => {
                                 setModal([]);
@@ -131,9 +136,11 @@ export default function Library(state, navigation) {
         );
     };
 
-    const showModal = (uri: string) => {
-        console.log(uri);
-        setModal(modal.concat(<SongListModal URI={uri} />));
+    const nav = useNavigation();
+
+    const showModal = (uri: string, album: JSON) => {
+        console.log(album);
+        setModal(<SongListModal URI={uri} album={album} />);
     };
 
     const LibraryHeader = () => {
@@ -187,7 +194,7 @@ export default function Library(state, navigation) {
                             <View style={styles.libraryItem}>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        showModal(item.album.id);
+                                        showModal(item.album.id, item.album);
                                         playTrack(item.album.uri);
                                     }}>
                                     <Image

@@ -86,8 +86,7 @@ const SpotifyActions = {
 
         const ENDPOINT = `https://api.spotify.com/v1/albums/${idlink}/tracks`;
 
-        var data;
-        fetch(ENDPOINT, {
+        const r = await fetch(ENDPOINT, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -97,12 +96,14 @@ const SpotifyActions = {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('DATA: ', data);
+                //console.log('DATA: ', data);
                 return data;
             })
             .catch((error) => {
                 return error;
             });
+
+        return r;
     },
 
     skipForward: async (token: string) => {
