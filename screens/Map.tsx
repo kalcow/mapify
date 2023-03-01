@@ -70,14 +70,12 @@ const Map = () => {
     const renderItem = ({ item }) => <Text>{item.user}</Text>;
 
     const markerPressed = (region) => {
-        //console.log(region.user);
         const goToPoint = {
             longitude: longitude_real,
             latitude: latitude_real,
             latitudeDelta: .016,
             longitudeDelta: .016,
         };
-        console.log()
         if (region.marker === 'marker-press') {
             goToPoint.longitude = region.coordinate.longitude;
             goToPoint.latitude = region.coordinate.latitude;
@@ -117,6 +115,9 @@ const Map = () => {
                     );
                 })}
             </MapView>
+            <View style={styles.friends}>
+                <Text>Hello</Text>
+            </View>
 
             {/* <Callout>
                 <ScrollView horizontal={true} style={styles.friends}>
@@ -157,10 +158,16 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     friends: {
-        borderColor: 'transparent',
+        color: 'white',
         borderWidth: 0.0,
-        marginBottom: '40%',
-        backgroundColor: '#fff',
+        marginBottom: '45%',
+        backgroundColor: '',
+        borderRadius: 20,
+        display: 'flex',
+        width: '90%',
+        paddingVertical: 40,
+        alignContent: 'center'
+
     },
 });
 
