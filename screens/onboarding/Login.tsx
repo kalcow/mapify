@@ -27,7 +27,7 @@ const Login = (props: Props) => {
             path: '/auth',
         });
 
-        console.log(redirectUri); 
+        console.log(redirectUri);
 
         const signInParameters = {
             provider: 'spotify' as Provider,
@@ -39,6 +39,8 @@ const Login = (props: Props) => {
                     'user-read-currently-playing',
                     'user-read-playback-state',
                     'user-modify-playback-state',
+                    'user-top-read',
+                    'user-read-recently-played',
                     'user-top-read',
                 ].join(' '),
             },
@@ -52,7 +54,7 @@ const Login = (props: Props) => {
             const response = await startAsync({ authUrl, redirectUri });
             if (response.type == 'success') {
                 console.log('success')
-                console.log(response.url); 
+                console.log(response.url);
                 await Linking.openURL(response.url);
             } else {
                 console.log('failed')
