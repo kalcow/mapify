@@ -1,10 +1,14 @@
 import * as Location from 'expo-location';
-import React, { useEffect, useState, useRef } from 'react';
-import { Dimensions, Image, Modal, StyleSheet, Text, View } from 'react-native';
-import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import MapView, { Callout, Marker } from 'react-native-maps';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Dimensions, StyleSheet, Text, View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
+import Colors from '../constants/colors';
 //import MapMarker from '../components/MapMarker';
 const markerImg = require('../assets/map-elements/bagel.png');
+const { width, height } = Dimensions.get('window');
+const CARD_HEIGHT = height * 0.15;
+const CARD_WIDTH = width * 0.8;
+const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const Map = () => {
     const [position, setPosition] = useState<Location.LocationObject | null>(null);
@@ -73,17 +77,16 @@ const Map = () => {
         const goToPoint = {
             longitude: longitude_real,
             latitude: latitude_real,
-            latitudeDelta: .016,
-            longitudeDelta: .016,
+            latitudeDelta: 0.016,
+            longitudeDelta: 0.016,
         };
         if (region.marker === 'marker-press') {
             goToPoint.longitude = region.coordinate.longitude;
             goToPoint.latitude = region.coordinate.latitude;
             goToPoint.latitudeDelta = 0.01;
             goToPoint.longitudeDelta = 0.01;
-
-        } 
-        
+        }
+        //@ts-ignore
         mapRef.current.animateToRegion(goToPoint, 500);
     };
 
@@ -98,7 +101,6 @@ const Map = () => {
                     latitudeDelta: 0.016,
                     longitudeDelta: 0.016,
                 }}
-               
                 onPress={(e) =>
                     markerPressed({
                         coordinate: e.nativeEvent.coordinate,
@@ -115,21 +117,23 @@ const Map = () => {
                     );
                 })}
             </MapView>
-            <View style={styles.friends}>
-                <Text>Hello</Text>
-            </View>
 
-            {/* <Callout>
-                <ScrollView horizontal={true} style={styles.friends}>
-                    <FlatList
-                        horizontal
-                        data={listLocals}
-                        renderItem={renderItem}
-                        keyExtractor={(item, index) => index}
-                        showsHorizontalScrollIndicator={false}
-                    />
-                </ScrollView>
-            </Callout> */}
+            <Animated.ScrollView
+                horizontal={true}
+                decelerationRate={0.7}
+                disableIntervalMomentum={true}
+                scrollEventThrottle={1}
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled={true}
+                snapToInterval={CARD_WIDTH + 20}
+                snapToAlignment="center"
+                style={styles.scrollView}>
+                {listLocals.map((value, index) => (
+                    <View style={styles.card} key={index}>
+                        <Text style={styles.cardText}>{value.user}</Text>
+                    </View>
+                ))}
+            </Animated.ScrollView>
         </View>
     );
 };
@@ -157,17 +161,27 @@ const styles = StyleSheet.create({
         height: '100%',
         width: '100%',
     },
-    friends: {
-        color: 'white',
-        borderWidth: 0.0,
+    scrollView: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingVertical: 10,
         marginBottom: '45%',
-        backgroundColor: '',
-        borderRadius: 20,
-        display: 'flex',
-        width: '90%',
-        paddingVertical: 40,
-        alignContent: 'center'
-
+    },
+    card: {
+        backgroundColor: Colors.greyBackground,
+        borderRadius: 30,
+        marginHorizontal: 10,
+        overflow: 'hidden',
+        height: CARD_HEIGHT,
+        width: CARD_WIDTH,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cardText: {
+        color: 'white',
+        fontFamily: 'satoshi-bold',
     },
 });
 
