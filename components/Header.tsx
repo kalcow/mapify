@@ -103,11 +103,8 @@ const Header: FC<UserInfo> = ({ name }) => {
                 }
             </View>
             <View style={styles.profile}>
-                <Image 
-                    source={{
-                        uri: imageURI,
-                    }}/>
-            </View>
+                <Image source={require("../assets/favicon.png")} />
+            </View> 
         </View>
     )
     /*<View style={styles.profile}>
