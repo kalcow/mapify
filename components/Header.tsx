@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useState, useEffect, FC } from 'react'
 import DropDownPicker from 'react-native-dropdown-picker';
-import NetInfo from '@react-native-community/netinfo'; 
+import NetInfo from '@react-native-community/netinfo';
 import Colors from '../constants/colors';
 
 //npm i react-native-dropdown-picker
@@ -32,7 +32,7 @@ const Header: FC<UserInfo> = ({ name }) => {
     ]);
 
     const myTheme = require("../Themes/dropdownTheme.tsx");
-    
+
     useEffect(() => {
         // Subscribe to network state updates
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -59,56 +59,63 @@ const Header: FC<UserInfo> = ({ name }) => {
     DropDownPicker.addTheme("MyThemeName", myTheme);
     DropDownPicker.setTheme("MyThemeName");
 
+    var imageURI = "https://unsplash.com/photos/wWZzXlDpMog";
     //drop-down menu is not compatible with styles such as borderColor or backgroundColor in the containerStyle property
     return (
         <View style={styles.headerWrapper}>
-            <Text style={styles.greetingText}>{greeting}, {"\n" + name}</Text>
-            {isOnline &&
-                < DropDownPicker
-                    open={openOn}
-                    value={valueOn}
-                    items={itemsOn}
-                    setOpen={setOpenOn}
-                    setValue={setValueOn}
-                    theme="MyThemeName"
-                    placeholder="hello"
-                    containerStyle={{
-                        maxWidth: '30%',
-                        minHeight: 10,
-                        flex: 1
+            <View>
+                <Text style={styles.greetingText}>{greeting}, {"\n" + name}</Text>
+            </View>
 
-                    }}
-                />
-            }
+            <View style={styles.picker}>
+                {isOnline &&
+                    < DropDownPicker
+                        open={openOn}
+                        value={valueOn}
+                        items={itemsOn}
+                        setOpen={setOpenOn}
+                        setValue={setValueOn}
+                        theme="MyThemeName"
+                        placeholder="hello"
+                        containerStyle={{
+                            //minHeight: 10,
+                            //flex: 1
+                        }}
+                    />
+                }
 
-            {!isOnline &&
-                <DropDownPicker
-                    open={openOff}
-                    value={valueOff}
-                    items={itemsOff}
-                    setOpen={setOpenOff}
-                    setValue={setValueOff}
-                    //theme="MyThemeName"
-                    placeholder="goodbye"
-                    containerStyle={{
-                        maxWidth: '30%',
-                        minHeight: 10,
-                        flex: 1,
-
-                    }}
-                    disabled={true}  //conditional component with only offline which is disabled
-                />
-            }
-            <Image source={require("../assets/favicon.png")} />
+                {!isOnline &&
+                    <DropDownPicker
+                        open={openOff}
+                        value={valueOff}
+                        items={itemsOff}
+                        setOpen={setOpenOff}
+                        setValue={setValueOff}
+                        theme="MyThemeName"
+                        placeholder="goodbye"
+                        containerStyle={{
+                            //maxWidth: '30%',
+                            minHeight: 10,
+                            flex: 1,
+                        }}
+                        disabled={true}  //conditional component with only offline which is disabled
+                    />
+                }
+            </View>
+            <View style={styles.profile}>
+                <Image 
+                    source={{
+                        uri: imageURI,
+                    }}/>
+            </View>
         </View>
     )
+    /*<View style={styles.profile}>
+                <Image source={require("../assets/favicon.png")} />
+            </View> */
 }
 
 const styles = StyleSheet.create({
-    greetingText: {
-        fontSize: 25,
-        color: "#FFF9EB"
-    },
     headerWrapper: {
         padding: 20,            //pads header on top and bottom
         alignSelf: "stretch",   //stretches out to fill out horizontally
@@ -116,6 +123,39 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",   //children are laid out in a row
         justifyContent: "space-between",  //evenly space children 
+    },
+
+    greetingText: {
+        //flex: 2,
+        fontSize: 20,
+        fontWeight: "bold",
+        color: Colors.text,
+        //backgroundColor: "green",
+    },
+
+    picker: {
+        //backgroundColor: "red",
+        flex: 3.5,
+        flexDirection: "column",
+        justifyContent: "space-around",
+        //marginLeft: 70,
+        //marginRight: 0
+        //flexDirection: "row-reverse",
+        //paddingLeft: 20,
+        //paddingRight: 0,
+        //marginRight: 0,
+        //borderRight: 0,
+        //alignContent: "flex-end",
+        //direction: "rtl",
+        //justifyContent: "flex-end",
+        //marginLeft: 20
+        //flex: 1.5,
+        //justifyContent: "flex-start"
+    },
+
+    profile: {
+        flex: 1,
+        marginLeft: 0,
     },
 })
 
