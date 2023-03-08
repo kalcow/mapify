@@ -2,9 +2,10 @@ import { getAccessToken } from '../lib/spotify';
 import { supabase } from '../supabase/supabase';
 import { useUserState } from '../context/user';
 
-import { View, Text, Button, TouchableOpacity, StyleSheet, Dimensions, Image, FlatList} from 'react-native';
+import { View, Text, Button, TouchableOpacity, StyleSheet, Dimensions, Image, FlatList, Modal} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { TextInput } from 'react-native-gesture-handler';
+import { setStatusBarBackgroundColor } from 'expo-status-bar';
 import { call } from 'react-native-reanimated';
 
 type Room_Props = {};
@@ -12,6 +13,7 @@ type Room_Props = {};
 const Rooms = (props: Room_Props) => {
     const u = useUserState();
     const [text, setText] = useState('+');
+    const [roomName, setName] = useState('');
     const [numRooms, setNumRooms] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
     const [joinCode, setJoinCode] = useState("Enter Room Code")
@@ -71,6 +73,62 @@ const Rooms = (props: Room_Props) => {
                         renderItem={({item}) => item}
                     />
                 </View>
+                <Modal
+                    visible={modalVisible}
+                    animationType="slide"
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible)
+                    }}
+                    transparent={false}
+                >
+                    <View
+                        style={{paddingTop: 70, 
+                                alignContent:"center",
+                                backgroundColor: "#08080A",
+                                height: Dimensions.get('window').height,
+                                paddingLeft: 15
+                            }}
+                    >
+                        <TouchableOpacity
+                            style={{
+                                padding: 10,
+                                borderRadius: 7,
+                            }}
+                            onPress={() => {
+                                setModalVisible(!modalVisible);
+                            }}
+                        >
+                            <Text style={{color: 'white', fontSize: 30}}>
+                                {'<'}
+                            </Text>
+                        </TouchableOpacity>
+                        <Text style={{color: "white", fontSize: 30, paddingLeft: 20}}> 
+                            Create a Room
+                        </Text>
+                        <TextInput
+                            style={{backgroundColor: 'white', borderRadius: 50}}
+                            onChangeText={setName}
+                            value={roomName}
+                        />
+                        <View style={{alignItems: 'center'}}>
+                            <TouchableOpacity
+                                style={{
+                                    padding: 10,
+                                    borderRadius: 50,
+                                    width: Dimensions.get('window').width * 1/2,
+                                    backgroundColor: "white",
+                                }}
+                                onPress={() => {
+                                    // Add the create a room code here.
+                                }}
+                            >
+                                <Text style={{color: '#08080A', fontSize: 20, textAlign: "center"}}>
+                                    Create
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
                 <TouchableOpacity
                     style={{
                         backgroundColor: 'grey',
@@ -79,7 +137,7 @@ const Rooms = (props: Room_Props) => {
                         borderRadius: 7,
                     }}
                     onPress={() => {
-                        setModalVisible(true);
+                        setModalVisible(!modalVisible);
                     }}>
                     <Text>{text}</Text>
                 </TouchableOpacity>
