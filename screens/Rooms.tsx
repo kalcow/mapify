@@ -4,8 +4,8 @@ import { useUserState } from '../context/user';
 
 import { View, Text, Button, TouchableOpacity, StyleSheet, Dimensions, Image, FlatList} from 'react-native';
 import React, { useEffect, useState } from 'react';
-import Crypto from 'crypto';
 import { TextInput } from 'react-native-gesture-handler';
+import { call } from 'react-native-reanimated';
 
 type Room_Props = {};
 
@@ -24,10 +24,34 @@ const Rooms = (props: Room_Props) => {
                 },
             ]);
 
-            console.log(data);
-        };
-        // addKey();
-    }, []);
+    const callApi = async () => {
+        setText('loading...');
+        try {
+            const response = await fetch('http://localhost:8080/createCode', {
+                method: 'POST',
+            });
+            const json = await response.json();
+            console.log(json.code, json.value);
+            setText(json.code);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // useEffect(() => {
+    //     const addKey = async () => {
+    //         const { data, error } = await supabase.from('Rooms').insert([
+    //             {
+    //                 current_access_token: u.accessToken,
+    //                 current_users: 345,
+    //             },
+    //         ]);
+
+    //         console.log(data);
+    //     };
+
+    //     addKey();
+    // }, []);
 
     return (
         <View
