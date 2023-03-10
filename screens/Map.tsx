@@ -1,8 +1,9 @@
 import * as Location from 'expo-location';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Animated, Dimensions, StyleSheet, Text, View, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import Colors from '../constants/colors';
+import Carousel from 'react-native-snap-carousel';
 //import MapMarker from '../components/MapMarker';
 const markerImg = require('../assets/map-elements/bagel.png');
 const { width, height } = Dimensions.get('window');
@@ -13,6 +14,9 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 const Map = () => {
     const [position, setPosition] = useState<Location.LocationObject | null>(null);
     const mapRef = useRef(null);
+
+    let mapAnimation = new Animated.Value(0);
+    let mapIndex = 0;
 
     useEffect(() => {
         const requestPermissions = async () => {
@@ -52,27 +56,36 @@ const Map = () => {
         {
             lat: latitude_real,
             long: longitude_real,
-            user: 'me',
+            user: 'Me',
+            currentSong: 'Harverd Dropout',
+            album: 'https://media.pitchfork.com/photos/5c673ed4817ba43f155f4ed0/1:1/w_600/harverd%20dropout_lil%20pump.jpg',
         },
         {
             lat: 34.06935,
             long: -118.44468,
             user: 'Kalyan',
+            currentSong: 'Ctrl',
+            album: 'https://media.npr.org/assets/img/2017/06/09/sza_sq-5a43e9b7680aaeed2dddc3dd6a648ae3d986c8ea-s800-c85.jpg',
         },
         {
             lat: 34.07274,
             long: -118.45425,
             user: 'Madeline',
+            currentSong: 'Reputation',
+            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
         },
         {
             lat: 34.07423,
             long: -118.45119,
             user: 'Georgia',
+            currentSong: 'Reputation',
+            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
         },
     ];
-
+    //@ts-ignore
     const renderItem = ({ item }) => <Text>{item.user}</Text>;
-
+    
+    //@ts-ignore
     const markerPressed = (region) => {
         const goToPoint = {
             longitude: longitude_real,
@@ -89,6 +102,8 @@ const Map = () => {
         //@ts-ignore
         mapRef.current.animateToRegion(goToPoint, 500);
     };
+
+  
 
     return (
         <View style={styles.container}>
@@ -127,10 +142,16 @@ const Map = () => {
                 pagingEnabled={true}
                 snapToInterval={CARD_WIDTH + 20}
                 snapToAlignment="center"
-                style={styles.scrollView}>
+                style={styles.scrollView}
+                //onScroll={}
+            >
                 {listLocals.map((value, index) => (
                     <View style={styles.card} key={index}>
-                        <Text style={styles.cardText}>{value.user}</Text>
+                        <View style={styles.infoText}>
+                            <Text style={styles.userText}>{value.user}</Text>
+                            <Text style={styles.songText}>Listening To: {value.currentSong}</Text>
+                        </View>
+                        <Image style={styles.albumImage} source={{ uri: value.album }} />
                     </View>
                 ))}
             </Animated.ScrollView>
@@ -171,17 +192,37 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: Colors.greyBackground,
-        borderRadius: 30,
+        borderRadius: 10,
         marginHorizontal: 10,
         overflow: 'hidden',
         height: CARD_HEIGHT,
         width: CARD_WIDTH,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'space-between',
+        //alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
     },
-    cardText: {
+    userText: {
         color: 'white',
         fontFamily: 'satoshi-bold',
+        fontSize: 20,
+    },
+    albumImage: {
+        width: '35%',
+        height: '85%',
+        borderRadius: 5,
+        //resizeMode: 'scale',
+        marginVertical: 10,
+        marginRight: 10,
+    },
+    infoText: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+    },
+    songText: {
+        color: 'white',
+        fontFamily: 'satoshi-medium',
+        fontSize: 13,
     },
 });
 
