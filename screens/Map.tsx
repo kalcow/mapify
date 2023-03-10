@@ -70,8 +70,9 @@ const Map = () => {
             user: 'Georgia',
         },
     ];
-
+    //@ts-ignore
     const renderItem = ({ item }) => <Text>{item.user}</Text>;
+    //@ts-ignore
 
     const markerPressed = (region) => {
         const goToPoint = {
