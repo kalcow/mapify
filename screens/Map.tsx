@@ -1,9 +1,9 @@
 import * as Location from 'expo-location';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, StyleSheet, Text, View, Image } from 'react-native';
+import { Animated, Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import Carousel from 'react-native-reanimated-carousel';
 import Colors from '../constants/colors';
-import Carousel from 'react-native-snap-carousel';
 //import MapMarker from '../components/MapMarker';
 const markerImg = require('../assets/map-elements/bagel.png');
 const { width, height } = Dimensions.get('window');
@@ -84,7 +84,7 @@ const Map = () => {
     ];
     //@ts-ignore
     const renderItem = ({ item }) => <Text>{item.user}</Text>;
-    
+
     //@ts-ignore
     const markerPressed = (region) => {
         const goToPoint = {
@@ -102,9 +102,17 @@ const Map = () => {
         //@ts-ignore
         mapRef.current.animateToRegion(goToPoint, 500);
     };
-
-  
-
+    //@ts-ignore
+    const carouselSpin = (lat, long) => {
+        const goToPoint = {
+            latitude: lat,
+            longitude: long,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+        };
+        //@ts-ignore
+        mapRef.current.animateToRegion(goToPoint, 500);
+    };
     return (
         <View style={styles.container}>
             <MapView
@@ -132,29 +140,43 @@ const Map = () => {
                     );
                 })}
             </MapView>
-
-            <Animated.ScrollView
-                horizontal={true}
-                decelerationRate={0.7}
-                disableIntervalMomentum={true}
-                scrollEventThrottle={1}
-                showsHorizontalScrollIndicator={false}
-                pagingEnabled={true}
-                snapToInterval={CARD_WIDTH + 20}
-                snapToAlignment="center"
-                style={styles.scrollView}
-                //onScroll={}
-            >
-                {listLocals.map((value, index) => (
+            <Carousel
+                style={styles.Carousel}
+                loop={true}
+                width={width}
+                height={width / 2}
+                autoPlay={false}
+                data={listLocals}
+                snapEnabled={true}
+                scrollAnimationDuration={1000}
+                onSnapToItem={(index) =>
+                    carouselSpin(listLocals[index].lat, listLocals[index].long)
+                }
+                renderItem={({ index }) => (
+                    // <View
+                    //     style={{
+                    //         flex: 1,
+                    //         borderWidth: 1,
+                    //         justifyContent: 'center',
+                    //     }}>
+                    //     <Text style={{ textAlign: 'center', fontSize: 30 }}>
+                    //         {listLocals[index].user}
+                    //     </Text>
+                    // </View>
                     <View style={styles.card} key={index}>
                         <View style={styles.infoText}>
-                            <Text style={styles.userText}>{value.user}</Text>
-                            <Text style={styles.songText}>Listening To: {value.currentSong}</Text>
+                            <Text style={styles.userText}>{listLocals[index].user}</Text>
+                            <Text style={styles.songText}>
+                                Listening To: {listLocals[index].currentSong}
+                            </Text>
                         </View>
-                        <Image style={styles.albumImage} source={{ uri: value.album }} />
+                        <Image
+                            style={styles.albumImage}
+                            source={{ uri: listLocals[index].album }}
+                        />
                     </View>
-                ))}
-            </Animated.ScrollView>
+                )}
+            />
         </View>
     );
 };
@@ -182,18 +204,19 @@ const styles = StyleSheet.create({
         height: '100%',
         width: '100%',
     },
-    scrollView: {
+    Carousel: {
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
         paddingVertical: 10,
-        marginBottom: '45%',
+        marginBottom: '30%',
+        alignContent: 'center',
     },
     card: {
         backgroundColor: Colors.greyBackground,
         borderRadius: 10,
-        marginHorizontal: 10,
+        marginHorizontal: '10%',
         overflow: 'hidden',
         height: CARD_HEIGHT,
         width: CARD_WIDTH,
