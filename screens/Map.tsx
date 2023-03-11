@@ -59,13 +59,15 @@ const Map = () => {
             user: 'Me',
             currentSong: 'Harverd Dropout',
             album: 'https://media.pitchfork.com/photos/5c673ed4817ba43f155f4ed0/1:1/w_600/harverd%20dropout_lil%20pump.jpg',
+            artist: 'Taylor Swift',
         },
         {
             lat: 34.06935,
-            long: -118.44468,
+            long: -118.46468,
             user: 'Kalyan',
             currentSong: 'Ctrl',
             album: 'https://media.npr.org/assets/img/2017/06/09/sza_sq-5a43e9b7680aaeed2dddc3dd6a648ae3d986c8ea-s800-c85.jpg',
+            artist: 'Taylor Swift',
         },
         {
             lat: 34.07274,
@@ -73,13 +75,88 @@ const Map = () => {
             user: 'Madeline',
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
+            artist: 'Taylor Swift',
+
+        },
+        {
+            lat: 34.06786,
+            long: -118.43885,
+            user: 'Georgia',
+            currentSong: 'She Wolf',
+            album: 'https://i.scdn.co/image/ab67616d0000b27357ebde83fa52e36af99f3b76',
+            artist: 'Sharika',
         },
         {
             lat: 34.07423,
             long: -118.45119,
-            user: 'Georgia',
+            user: 'Robin',
+            currentSong: "'39",
+            album: 'https://i.scdn.co/image/ab67616d0000b273ce4f1737bc8a646c8c4bd25a',
+            artist: 'Queen',
+        },
+        {
+            lat: 34.07423,
+            long: -118.45119,
+            user: 'Claire',
+            currentSong: '天公不作美',
+            album: 'https://i.scdn.co/image/ab67616d00004851e655e5ac2917d9a7952389de',
+            artist: '阿悠悠',
+        },
+        {
+            lat: 34.06423,
+            long: -118.45119,
+            user: 'Joyce',
+            currentSong: 'More & More',
+            album: 'https://i.scdn.co/image/ab67616d0000b273b7ce24c3fe0b15f535e03ae6',
+            artist: 'GEMINI',
+        },
+        {
+            lat: 34.07523,
+            long: -118.45119,
+            user: 'Max',
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
+            artist: 'Taylor Swift',
+        },
+        {
+            lat: 34.07423,
+            long: -118.42119,
+            user: 'Edward',
+            currentSong: 'Reputation',
+            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
+            artist: 'Taylor Swift',
+        },
+        {
+            lat: 34.07423,
+            long: -118.45119,
+            user: 'Nitya',
+            currentSong: 'Reputation',
+            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
+            artist: 'Taylor Swift',
+        },
+        {
+            lat: 34.07423,
+            long: -118.45119,
+            user: 'Chloe',
+            currentSong: 'Reputation',
+            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
+            artist: 'Taylor Swift',
+        },
+        {
+            lat: 34.07423,
+            long: -118.45119,
+            user: 'Jayson',
+            currentSong: 'Reputation',
+            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
+            artist: 'Taylor Swift',
+        },
+        {
+            lat: 34.07423,
+            long: -118.45119,
+            user: 'Nicholas',
+            currentSong: 'Reputation',
+            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
+            artist: 'Taylor Swift',
         },
     ];
     //@ts-ignore
@@ -169,6 +246,7 @@ const Map = () => {
                             <Text style={styles.songText}>
                                 Listening To: {listLocals[index].currentSong}
                             </Text>
+                            <Text style={styles.songText}>Artist: {listLocals[index].artist}</Text>
                         </View>
                         <Image
                             style={styles.albumImage}
