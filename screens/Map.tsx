@@ -4,8 +4,9 @@ import { Animated, Dimensions, Image, StyleSheet, Text, View } from 'react-nativ
 import MapView, { Marker } from 'react-native-maps';
 import Carousel from 'react-native-reanimated-carousel';
 import Colors from '../constants/colors';
+
 //import MapMarker from '../components/MapMarker';
-const markerImg = require('../assets/map-elements/bagel.png');
+const markerImg = require('../assets/map-elements/Edward.png');
 const { width, height } = Dimensions.get('window');
 const CARD_HEIGHT = height * 0.15;
 const CARD_WIDTH = width * 0.8;
@@ -14,6 +15,7 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 const Map = () => {
     const [position, setPosition] = useState<Location.LocationObject | null>(null);
     const mapRef = useRef(null);
+    const carouselRef = useRef(null);
 
     let mapAnimation = new Animated.Value(0);
     let mapIndex = 0;
@@ -60,6 +62,7 @@ const Map = () => {
             currentSong: 'Harverd Dropout',
             album: 'https://media.pitchfork.com/photos/5c673ed4817ba43f155f4ed0/1:1/w_600/harverd%20dropout_lil%20pump.jpg',
             artist: 'Taylor Swift',
+            profilePhoto: markerImg,
         },
         {
             lat: 34.06935,
@@ -76,7 +79,6 @@ const Map = () => {
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
-
         },
         {
             lat: 34.06786,
@@ -178,6 +180,8 @@ const Map = () => {
         }
         //@ts-ignore
         mapRef.current.animateToRegion(goToPoint, 500);
+        //carouselRef.current.scrollTo({index: 1});
+        //console.log(carouselRef.current.scrollTo({index: 1}));
     };
     //@ts-ignore
     const carouselSpin = (lat, long) => {
@@ -213,11 +217,17 @@ const Map = () => {
                             key={index}
                             coordinate={{ latitude: value.lat, longitude: value.long }}
                             title={value.user}
-                        />
+                            //image={markerImg}
+                            style={styles.marker}>
+                            <View style={styles.marker}>
+                                <Image source={markerImg} style={styles.image}></Image>
+                            </View>
+                        </Marker>
                     );
                 })}
             </MapView>
             <Carousel
+                ref = {carouselRef}
                 style={styles.Carousel}
                 loop={true}
                 width={width}
@@ -230,16 +240,6 @@ const Map = () => {
                     carouselSpin(listLocals[index].lat, listLocals[index].long)
                 }
                 renderItem={({ index }) => (
-                    // <View
-                    //     style={{
-                    //         flex: 1,
-                    //         borderWidth: 1,
-                    //         justifyContent: 'center',
-                    //     }}>
-                    //     <Text style={{ textAlign: 'center', fontSize: 30 }}>
-                    //         {listLocals[index].user}
-                    //     </Text>
-                    // </View>
                     <View style={styles.card} key={index}>
                         <View style={styles.infoText}>
                             <Text style={styles.userText}>{listLocals[index].user}</Text>
@@ -273,12 +273,15 @@ const styles = StyleSheet.create({
         // backgroundColor: '#000000',
         alignItems: 'center',
         flex: 1,
-        height: Dimensions.get('window').height / 18,
-        width: Dimensions.get('window').width / 1,
+        height: Dimensions.get('window').height / 23,
+        width: Dimensions.get('window').height / 23,
+        borderRadius: Dimensions.get('window').height / 46,
+        overflow: 'hidden',
+        resizeMode: 'cover',
     },
     image: {
         flex: 1,
-        resizeMode: 'contain',
+        resizeMode: 'cover',
         height: '100%',
         width: '100%',
     },
