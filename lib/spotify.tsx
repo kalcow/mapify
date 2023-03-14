@@ -79,6 +79,22 @@ const SpotifyActions = {
         });
         return r;
     },
+    playTrack: async (token: string, uri: string) => {
+        const ENDPOINT = `https://api.spotify.com/v1/me/player/play`;
+        var arr = [];
+        arr.push(uri);
+        const data = { uris: arr };
+        const r = await fetch(ENDPOINT, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return r;
+    },
 
     getAlbumSongs: async (token: string, album_id: string) => {
         //console.log(token);

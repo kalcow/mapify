@@ -19,55 +19,20 @@ import Animated, {
     SlideOutLeft,
 } from 'react-native-reanimated';
 
-import Colors from '../constants/colors';
-import Satoshi from '../constants/Satoshi';
+import Colors from '../../constants/colors';
+import Satoshi from '../../constants/Satoshi';
 import useSWR from 'swr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Button from '../components/Button';
+import Button from '../../components/Button';
 
-import SpotifyActions from '../lib/spotify';
+import SpotifyActions from '../../lib/spotify';
 
-import { useUserState } from '../context/user';
+import { useUserState } from '../../context/user';
 const API_ENDPOINT = 'https://mapify-server.fly.dev/player';
 
 import { useNavigation } from '@react-navigation/native';
 
-import BottomTabIcons from '../constants/BottomTabIcons';
-
 export default function Library(state, navigation) {
-    const libraryData = [
-        {
-            key: 'Kids Sees Ghosts',
-            subText: 'Kanye West',
-            url: 'https://e.snmc.io/i/1200/s/403d180c0c5885aaa34dfe48f8a41b27/7562716',
-        },
-        {
-            key: 'Ctrl',
-            subText: 'SZA',
-            url: 'https://media.npr.org/assets/img/2017/06/09/sza_sq-5a43e9b7680aaeed2dddc3dd6a648ae3d986c8ea-s800-c85.jpg',
-        },
-        {
-            key: 'Harverd Dropout',
-            subText: 'Lil Pump',
-            url: 'https://media.pitchfork.com/photos/5c673ed4817ba43f155f4ed0/1:1/w_600/harverd%20dropout_lil%20pump.jpg',
-        },
-        {
-            key: 'reputation',
-            subText: 'Taylor Swift',
-            url: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
-        },
-        {
-            key: 'What Could Possibly Go...',
-            subText: 'Dominic Fike',
-            url: 'https://media.pitchfork.com/photos/5f3171dc4a81119dc842fba1/1:1/w_600/What%20Could%20Possibly%20Go%20Wrong_dominic%20fike.jpg',
-        },
-        {
-            key: 'Currents (From Ben)',
-            subText: 'Tame Impala',
-            url: 'https://media.pitchfork.com/photos/5929ae46c0084474cd0c188c/1:1/w_600/04192b63.jpg',
-        },
-    ];
-
     // Fetching saved album and playlist data from ENDPOINT
 
     const u = useUserState();
@@ -76,7 +41,7 @@ export default function Library(state, navigation) {
     //const { data, error, mutate } = useSWR(API_ENDPOINT, fetcher, { refreshInterval: 500 });
 
     // Right now using My Data in a JSON
-    const data = require('../assets/fakeAlbumData.json');
+    const data = require('../../assets/fakeAlbumData.json');
 
     // Loading Library and Error Checking
     const load = true;
@@ -194,8 +159,12 @@ export default function Library(state, navigation) {
                             <View style={styles.libraryItem}>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        showModal(item.album.id, item.album);
-                                        playTrack(item.album.uri);
+                                        //console.log(item.album);
+                                        nav.navigate('SongPage', {
+                                            info: JSON.stringify(item.album),
+                                        });
+                                        /*showModal(item.album.id, item.album);*/
+                                        //</View>playTrack(item.album.uri);
                                     }}>
                                     <Image
                                         style={[

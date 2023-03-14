@@ -21,7 +21,7 @@ import Animated, {
 //* Screens
 import Home from '../screens/Home';
 import Map from '../components/Globe_development';
-import Library from '../screens/Library';
+import Library from '../screens/library/Library';
 import Discover from '../screens/Discover';
 
 const TabData = [
