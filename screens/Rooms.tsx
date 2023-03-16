@@ -142,23 +142,25 @@ const Rooms = (props: Room_Props) => {
                             paddingLeft: 25,
                             backgroundColor: 'white',
                             borderRadius: 10,
-                            width: Dimensions.get('window').width * 0.7,
+                            width: Dimensions.get('window').width * 0.65,
                             height: Dimensions.get('window').width * 0.1,
                             fontSize: 20,
                         }}></TextInput>
-                    <TouchableOpacity
-                        onPress={joinRoom}
-                        style={{
-                            backgroundColor: 'white',
-                            borderRadius: 10,
-                            width: Dimensions.get('window').width * 0.125,
-                            justifyContent: 'center',
-                        }}>
-                        <Text style={{ fontSize: 20, textAlign: 'center' }}>Join</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={rickRoll}>
-                        <Text style={{ color: 'white' }}>RICKROLL</Text>
-                    </TouchableOpacity>
+                    <View style={{flexDirection: 'column'}}>
+                        <TouchableOpacity
+                            onPress={joinRoom}
+                            style={{
+                                backgroundColor: 'white',
+                                borderRadius: 10,
+                                width: Dimensions.get('window').width * 0.125,
+                                justifyContent: 'center',
+                            }}>
+                            <Text style={{ fontSize: 20, textAlign: 'center' }}>Join</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{borderWidth: 1, borderColor: 'white', borderRadius: 20 }}onPress={rickRoll}>
+                            <Text style={{ color: 'white' }}>RICKROLL</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View style={{height: 3 * Dimensions.get('window').height * .2 + 60, overflow: "hidden", zIndex: 1}}>
                     <FlatList 
