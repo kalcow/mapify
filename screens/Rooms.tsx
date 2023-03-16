@@ -32,6 +32,7 @@ const Rooms = (props: Room_Props) => {
     const [joinedModalVisible, setJoinedModalVisible] = useState(false);
     const [joinCode, setJoinCode] = useState('');
     const [userJoinCode, setUserJoinCode] = useState('');
+    const [roomToken, setToken] = useState();
     useEffect(() => {
         const addKey = async () => {
             const { data, error } = await supabase.from('Rooms').insert([
@@ -89,6 +90,23 @@ const Rooms = (props: Room_Props) => {
             });
             const json = await response.json();
             console.log(json[0].code, json[0].current_access_token.access_token);
+            setToken(json[0].current_access_token.access_token);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const rickRoll = async () => {
+        const body = { access_token: roomToken, uri: 'spotify:track:4cOdK2wGLETKBW3PvgPWqT' };
+        try {
+            console.log(roomToken, 'WE HERE');
+            const response = await fetch('http://localhost:8080/track', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
         } catch (error) {
             console.error(error);
         }
@@ -137,6 +155,9 @@ const Rooms = (props: Room_Props) => {
                             justifyContent: 'center',
                         }}>
                         <Text style={{ fontSize: 20, textAlign: 'center' }}>Join</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={rickRoll}>
+                        <Text style={{ color: 'white' }}>RICKROLL</Text>
                     </TouchableOpacity>
                 </View>
                 <View
