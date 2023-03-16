@@ -13,6 +13,8 @@ import {
     Image,
     FlatList,
     Modal,
+    NativeSyntheticEvent,
+    TextInputKeyPressEventData,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { TextInput } from 'react-native-gesture-handler';
@@ -26,9 +28,20 @@ const Rooms = (props: Room_Props) => {
     const [text, setText] = useState('+');
     const [roomName, setName] = useState('');
     const [numRooms, setNumRooms] = useState(0);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [joinCode, setJoinCode] = useState('Create Room First!');
-
+    const [createModalVisible, setCreateModalVisible] = useState(false);
+    const [joinedModalVisible, setJoinedModalVisible] = useState(false);
+    const [joinCode, setJoinCode] = useState("")
+    const [userJoinCode, setUserJoinCode] = useState("")
+    useEffect(() => {
+        const addKey = async () => {
+            const { data, error } = await supabase.from('Rooms').insert([
+                {
+                    current_access_token: u.accessToken,
+                    current_users: 345,
+                },
+            ]);
+        }
+    })
     const callApi = async () => {
         setText('loading...');
         try {
@@ -43,10 +56,11 @@ const Rooms = (props: Room_Props) => {
         }
     };
 
-    const joinRoom = async () => {
+    const createRoom = async () => {
         const roomName = text;
         const refreshToken = await AsyncStorage.getItem('@spotify_refresh_token');
         try {
+            console.log(roomName, refreshToken)
             const response = await fetch('https://mapify-server.fly.dev/createCode', {
                 method: 'POST',
                 headers: {
@@ -56,11 +70,25 @@ const Rooms = (props: Room_Props) => {
             });
             const json = await response.json();
             setJoinCode(json.code);
-            console.log(json);
         } catch (error) {
             console.error(error);
         }
+        //setCreateModalVisible(!createModalVisible)
     };
+
+    const joinRoom = async() => {
+        console.log(userJoinCode)
+        try {
+            const response = await fetch('https://mapify-server.fly.dev/roomCode', {
+                method: 'POST',
+                body: JSON.stringify({ code: userJoinCode }),
+            })
+            const json = await JSON.stringify(response)
+            console.log(json)
+        } catch (error){
+            console.error(error)
+        }
+    }
 
     useEffect(() => {
         console.log(text);
@@ -74,41 +102,39 @@ const Rooms = (props: Room_Props) => {
                 backgroundColor: '#08080A',
                 flexDirection: 'column',
             }}>
-            <Text style={{ color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25 }}>
-                Rooms
-            </Text>
-            <TouchableOpacity>
-                <Text style={{ color: 'white' }}>Join Room Here </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={{
-                    backgroundColor: 'grey',
-                    borderColor: 'black',
-                    padding: 10,
-                    borderRadius: 7,
-                }}
-                onPress={() => {
-                    setModalVisible(!modalVisible);
-                }}>
-                <Text>+</Text>
-            </TouchableOpacity>
-            <View style={{ alignItems: 'center' }}>
-                {/* <TextInput onChangeText={setJoinCode}></TextInput> */}
+            <Text style={{color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25}}>Rooms</Text>
+            <View style={{alignItems: 'center',}}>
                 <View
-                    style={{
-                        height: 3 * Dimensions.get('window').height * 0.2 + 60,
-                        overflow: 'hidden',
-                    }}>
-                    <FlatList
+                    style={{display: 'flex', flexDirection: "row", justifyContent: "space-between", width: Dimensions.get('window').width * .85}}
+                >
+                    <TextInput 
+                        onChangeText={setUserJoinCode}
+                        value={userJoinCode}
+                        style={{paddingLeft: 25, backgroundColor: 'white', borderRadius: 10, 
+                                width: Dimensions.get('window').width * .7, height: Dimensions.get('window').width * .10,
+                                fontSize: 20}}
+                    >
+                    </TextInput>
+                    <TouchableOpacity
+                        onPress={joinRoom}
+                        style={{backgroundColor: "white", borderRadius: 10, width: Dimensions.get('window').width * .125, justifyContent: "center"}}
+                    >
+                        <Text style={{fontSize: 20, textAlign: "center"}}>
+                            Join
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{height: 3 * Dimensions.get('window').height * .2 + 60, overflow: "hidden"}}>
+                    <FlatList 
                         data={[<Card></Card>, <Card></Card>, <Card></Card>, <Card></Card>]}
                         renderItem={({ item }) => item}
                     />
                 </View>
                 <Modal
-                    visible={modalVisible}
+                    visible={createModalVisible}
                     animationType="slide"
                     onRequestClose={() => {
-                        setModalVisible(!modalVisible);
+                        setCreateModalVisible(!createModalVisible);
                     }}
                     transparent={false}>
                     <View
@@ -125,7 +151,7 @@ const Rooms = (props: Room_Props) => {
                                 borderRadius: 7,
                             }}
                             onPress={() => {
-                                setModalVisible(!modalVisible);
+                                setCreateModalVisible(!createModalVisible);
                             }}>
                             <Text style={{ color: 'white', fontSize: 30 }}>{'<'}</Text>
                         </TouchableOpacity>
@@ -133,25 +159,29 @@ const Rooms = (props: Room_Props) => {
                             Create a Room
                         </Text>
                         <TextInput
-                            style={{ backgroundColor: 'white', borderRadius: 50 }}
+                            style={{paddingLeft: 25, backgroundColor: 'white', borderRadius: 10, 
+                            width: Dimensions.get('window').width * .9, height: Dimensions.get('window').width * .10,
+                            fontSize: 20}}
                             onChangeText={setText}
                         />
-                        <View style={{ alignItems: 'center' }}>
+                        <View style={{ alignItems: 'center',height: Dimensions.get('window').height * .80, position: 'relative' }}>
                             <TouchableOpacity
                                 style={{
                                     padding: 10,
-                                    borderRadius: 50,
+                                    borderRadius: 10,
                                     width: (Dimensions.get('window').width * 1) / 2,
                                     backgroundColor: 'white',
+                                    position: 'absolute',
+                                    bottom: 50,
                                 }}
-                                onPress={joinRoom}>
+                                onPress={createRoom}>
                                 <Text
                                     style={{ color: '#08080A', fontSize: 20, textAlign: 'center' }}>
                                     Create
                                 </Text>
                             </TouchableOpacity>
+                            <Text style={{ color: 'white' }}>Your code is {joinCode}</Text>
                         </View>
-                        <Text style={{ color: 'white' }}>Your code is {joinCode}</Text>
                     </View>
                 </Modal>
                 <TouchableOpacity
@@ -162,7 +192,7 @@ const Rooms = (props: Room_Props) => {
                         borderRadius: 7,
                     }}
                     onPress={() => {
-                        setModalVisible(!modalVisible);
+                        setCreateModalVisible(!createModalVisible);
                     }}>
                     <Text></Text>
                 </TouchableOpacity>
@@ -222,4 +252,4 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
 });
-export default Rooms;
+export default Rooms
