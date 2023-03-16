@@ -60,7 +60,7 @@ const Rooms = (props: Room_Props) => {
         const roomName = text;
         const refreshToken = await AsyncStorage.getItem('@spotify_refresh_token');
         try {
-            console.log(roomName, refreshToken);
+            console.log(roomName, refreshToken)
             const response = await fetch('http://localhost:8080/createCode', {
                 method: 'POST',
                 headers: {
@@ -103,13 +103,13 @@ const Rooms = (props: Room_Props) => {
             style={{
                 flex: 1,
                 paddingTop: 70,
+                paddingLeft: Dimensions.get('window').width * .05,
                 backgroundColor: '#08080A',
                 flexDirection: 'column',
+                position: 'absolute'
             }}>
-            <Text style={{ color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25 }}>
-                Rooms
-            </Text>
-            <View style={{ alignItems: 'center' }}>
+            <Text style={{color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25}}>Rooms</Text>
+            <View style={{alignItems: 'center'}}>
                 <View
                     style={{
                         display: 'flex',
@@ -139,16 +139,34 @@ const Rooms = (props: Room_Props) => {
                         <Text style={{ fontSize: 20, textAlign: 'center' }}>Join</Text>
                     </TouchableOpacity>
                 </View>
-                <View
-                    style={{
-                        height: 3 * Dimensions.get('window').height * 0.2 + 60,
-                        overflow: 'hidden',
-                    }}>
-                    <FlatList
+                <View style={{height: 3 * Dimensions.get('window').height * .2 + 60, overflow: "hidden", zIndex: 1}}>
+                    <FlatList 
                         data={[<Card></Card>, <Card></Card>, <Card></Card>, <Card></Card>]}
                         renderItem={({ item }) => item}
                     />
                 </View>
+                <TouchableOpacity
+                    style={{
+                        backgroundColor: 'white',
+                        borderColor: 'black',
+                        padding: 10,
+                        borderRadius: 100,
+                        zIndex: 2,
+                        position: 'relative',
+                        width: 60,
+                        height: 60,
+                        bottom: Dimensions.get('window').height * .1,
+                        left: Dimensions.get('window').width * .35
+                    }}
+                    onPress={() => {
+                        setCreateModalVisible(!createModalVisible);
+                    }}>
+                    <Text style={{fontSize: 25, textAlign: 'center', paddingTop: 3}}>
+                        +
+                    </Text>
+                </TouchableOpacity>
+
+
                 <Modal
                     visible={createModalVisible}
                     animationType="slide"
@@ -213,18 +231,6 @@ const Rooms = (props: Room_Props) => {
                         </View>
                     </View>
                 </Modal>
-                <TouchableOpacity
-                    style={{
-                        backgroundColor: 'grey',
-                        borderColor: 'black',
-                        padding: 10,
-                        borderRadius: 7,
-                    }}
-                    onPress={() => {
-                        setCreateModalVisible(!createModalVisible);
-                    }}>
-                    <Text></Text>
-                </TouchableOpacity>
             </View>
         </View>
     );
@@ -244,8 +250,8 @@ const Card = (props: Card_Props) => {
                     <Text style={styles.title}>{name}</Text>
                     <Text style={styles.subheading}>User-name</Text>
                 </View>
-                <View>
-                    <Image source={icon} />
+                <View style={{flexDirection: 'row', display: 'flex'}}>
+                    <Image source={icon} style={{width: 50, height: 50}}/>
                     <View>
                         <Text style={{ color: 'white' }}>Currently Playing</Text>
                         <Text style={{ color: 'white' }}>{song_name_temp}</Text>
