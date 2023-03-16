@@ -18,6 +18,7 @@ const Claire = require('../assets/map-elements/Claire.png');
 const Nicholas = require('../assets/map-elements/Nicholas.png');
 const Joyce = require('../assets/map-elements/Joyce.png');
 const Nitya = require('../assets/map-elements/Nitya.png');
+const Georgia = require('../assets/map-elements/Georgia.png')
 
 const { width, height } = Dimensions.get('window');
 const CARD_HEIGHT = height * 0.15;
@@ -71,27 +72,27 @@ const Map = () => {
             lat: latitude_real,
             long: longitude_real,
             user: 'Me',
-            currentSong: 'Harverd Dropout',
-            album: 'https://media.pitchfork.com/photos/5c673ed4817ba43f155f4ed0/1:1/w_600/harverd%20dropout_lil%20pump.jpg',
-            artist: 'Taylor Swift',
+            currentSong: 'Last Night',
+            album: 'https://i.scdn.co/image/ab67616d0000b27307e43c2a6f404e05848df296',
+            artist: 'Morgan Wallen',
             profilePhoto: KM,
         },
         {
             lat: 34.06935,
             long: -118.46468,
             user: 'Kalyan',
-            currentSong: 'Ctrl',
+            currentSong: 'Still Falling For You',
             album: 'https://i.scdn.co/image/ab67616d0000b273dc12b2bd6884bd1de21b6bae',
-            artist: 'Taylor Swift',
+            artist: 'Ellie Goulding',
             profilePhoto: Kalyan,
         },
         {
             lat: 34.07274,
             long: -118.45425,
             user: 'Madeline',
-            currentSong: 'Reputation',
-            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
-            artist: 'Taylor Swift',
+            currentSong: 'Nobody Gets Me',
+            album: 'https://i.scdn.co/image/ab67616d0000b27370dbc9f47669d120ad874ec1',
+            artist: 'SZA',
             profilePhoto: Madeline,
         },
         {
@@ -101,6 +102,7 @@ const Map = () => {
             currentSong: 'She Wolf',
             album: 'https://i.scdn.co/image/ab67616d0000b27357ebde83fa52e36af99f3b76',
             artist: 'Sharika',
+            profilePhoto: Georgia
         },
         {
             lat: 34.06973,
@@ -133,27 +135,27 @@ const Map = () => {
             lat: 34.07128,
             long: -118.44895,
             user: 'Max',
-            currentSong: 'Reputation',
-            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
-            artist: 'Taylor Swift',
+            currentSong: "i swear i'll never leave again",
+            album: 'https://i.scdn.co/image/ab67616d0000b27394237be74edae41560152bce',
+            artist: 'keshi',
             profilePhoto: Max,
         },
         {
             lat: 34.07423,
             long: -118.42119,
             user: 'Edward',
-            currentSong: 'Reputation',
-            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
-            artist: 'Taylor Swift',
+            currentSong: 'Dark Horse',
+            album: 'https://i.scdn.co/image/ab67616d0000b27347f930accd8ac01686401fa2',
+            artist: 'Katy Perry',
             profilePhoto: Edward,
         },
         {
             lat: 34.07255,
             long: -118.44206,
             user: 'Nitya',
-            currentSong: 'Reputation',
-            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
-            artist: 'Taylor Swift',
+            currentSong: 'Golden Hour',
+            album: 'https://i.scdn.co/image/ab67616d0000b273c2504e80ba2f258697ab2954',
+            artist: 'JVKE',
             profilePhoto: Nitya,
         },
         {
@@ -169,18 +171,18 @@ const Map = () => {
             lat: 34.07083,
             long: -118.4433,
             user: 'Jayson',
-            currentSong: 'Reputation',
-            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
-            artist: 'Taylor Swift',
+            currentSong: 'Harverd Dropout',
+            album: 'https://media.pitchfork.com/photos/5c673ed4817ba43f155f4ed0/1:1/w_600/harverd%20dropout_lil%20pump.jpg',
+            artist: 'Lil Pump',
             profilePhoto: Jayson,
         },
         {
             lat: 34.07006,
             long: -118.44077,
             user: 'Nicholas',
-            currentSong: 'Reputation',
-            album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
-            artist: 'Taylor Swift',
+            currentSong: 'Wrecking Ball',
+            album: 'https://i.scdn.co/image/ab67616d0000b2736b18d0490878750cd69abf2c',
+            artist: 'Miley Cyrus',
             profilePhoto: Nicholas,
         },
     ];
@@ -296,9 +298,9 @@ const styles = StyleSheet.create({
         // backgroundColor: '#000000',
         alignItems: 'center',
         flex: 1,
-        height: Dimensions.get('window').height / 14,
-        width: Dimensions.get('window').height / 14,
-        borderRadius: Dimensions.get('window').height / 28,
+        height: Dimensions.get('window').height / 20,
+        width: Dimensions.get('window').height / 20,
+        borderRadius: Dimensions.get('window').height / 40,
         overflow: 'hidden',
         resizeMode: 'cover',
     },
@@ -344,12 +346,17 @@ const styles = StyleSheet.create({
     },
     infoText: {
         paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingVertical: 15,
+        flexShrink: 1,
+        //flex: 1,
+        //marginRight: 10,
+
     },
     songText: {
         color: 'white',
         fontFamily: 'satoshi-medium',
         fontSize: 13,
+        paddingVertical: 3,
     },
 });
 
