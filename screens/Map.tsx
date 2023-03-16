@@ -6,7 +6,19 @@ import Carousel from 'react-native-reanimated-carousel';
 import Colors from '../constants/colors';
 
 //import MapMarker from '../components/MapMarker';
-const markerImg = require('../assets/map-elements/Edward.png');
+const KM = require('../assets/map-elements/KayleeMei.png');
+const Edward = require('../assets/map-elements/Edward.png');
+const Kalyan = require('../assets/map-elements/Kalyan.png');
+const Jayson = require('../assets/map-elements/Jayson.png');
+const Madeline = require('../assets/map-elements/Madeline.png');
+const Robin = require('../assets/map-elements/Robin.png');
+const Chloe = require('../assets/map-elements/Chloe.png');
+const Max = require('../assets/map-elements/Max.png');
+const Claire = require('../assets/map-elements/Claire.png');
+const Nicholas = require('../assets/map-elements/Nicholas.png');
+const Joyce = require('../assets/map-elements/Joyce.png');
+const Nitya = require('../assets/map-elements/Nitya.png');
+
 const { width, height } = Dimensions.get('window');
 const CARD_HEIGHT = height * 0.15;
 const CARD_WIDTH = width * 0.8;
@@ -62,15 +74,16 @@ const Map = () => {
             currentSong: 'Harverd Dropout',
             album: 'https://media.pitchfork.com/photos/5c673ed4817ba43f155f4ed0/1:1/w_600/harverd%20dropout_lil%20pump.jpg',
             artist: 'Taylor Swift',
-            profilePhoto: markerImg,
+            profilePhoto: KM,
         },
         {
             lat: 34.06935,
             long: -118.46468,
             user: 'Kalyan',
             currentSong: 'Ctrl',
-            album: 'https://media.npr.org/assets/img/2017/06/09/sza_sq-5a43e9b7680aaeed2dddc3dd6a648ae3d986c8ea-s800-c85.jpg',
+            album: 'https://i.scdn.co/image/ab67616d0000b273dc12b2bd6884bd1de21b6bae',
             artist: 'Taylor Swift',
+            profilePhoto: Kalyan,
         },
         {
             lat: 34.07274,
@@ -79,6 +92,7 @@ const Map = () => {
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
+            profilePhoto: Madeline,
         },
         {
             lat: 34.06786,
@@ -89,12 +103,13 @@ const Map = () => {
             artist: 'Sharika',
         },
         {
-            lat: 34.07423,
-            long: -118.45119,
+            lat: 34.06973,
+            long: -118.44831,
             user: 'Robin',
             currentSong: "'39",
             album: 'https://i.scdn.co/image/ab67616d0000b273ce4f1737bc8a646c8c4bd25a',
             artist: 'Queen',
+            profilePhoto: Robin,
         },
         {
             lat: 34.07423,
@@ -103,6 +118,7 @@ const Map = () => {
             currentSong: '天公不作美',
             album: 'https://i.scdn.co/image/ab67616d00004851e655e5ac2917d9a7952389de',
             artist: '阿悠悠',
+            profilePhoto: Claire,
         },
         {
             lat: 34.06423,
@@ -111,14 +127,16 @@ const Map = () => {
             currentSong: 'More & More',
             album: 'https://i.scdn.co/image/ab67616d0000b273b7ce24c3fe0b15f535e03ae6',
             artist: 'GEMINI',
+            profilePhoto: Joyce,
         },
         {
-            lat: 34.07523,
-            long: -118.45119,
+            lat: 34.07128,
+            long: -118.44895,
             user: 'Max',
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
+            profilePhoto: Max,
         },
         {
             lat: 34.07423,
@@ -127,38 +145,43 @@ const Map = () => {
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
+            profilePhoto: Edward,
         },
         {
-            lat: 34.07423,
-            long: -118.45119,
+            lat: 34.07255,
+            long: -118.44206,
             user: 'Nitya',
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
+            profilePhoto: Nitya,
         },
         {
-            lat: 34.07423,
-            long: -118.45119,
+            lat: 34.07233,
+            long: -118.44978,
             user: 'Chloe',
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
+            profilePhoto: Chloe,
         },
         {
-            lat: 34.07423,
-            long: -118.45119,
+            lat: 34.07083,
+            long: -118.4433,
             user: 'Jayson',
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
+            profilePhoto: Jayson,
         },
         {
-            lat: 34.07423,
-            long: -118.45119,
+            lat: 34.07006,
+            long: -118.44077,
             user: 'Nicholas',
             currentSong: 'Reputation',
             album: 'https://imageio.forbes.com/blogs-images/brittanyhodak/files/2017/08/20988198_10154975234150369_1493436770276743217_o-1200x1200.jpg?format=jpg&width=1200',
             artist: 'Taylor Swift',
+            profilePhoto: Nicholas,
         },
     ];
     //@ts-ignore
@@ -220,14 +243,14 @@ const Map = () => {
                             //image={markerImg}
                             style={styles.marker}>
                             <View style={styles.marker}>
-                                <Image source={markerImg} style={styles.image}></Image>
+                                <Image source={value.profilePhoto} style={styles.image}></Image>
                             </View>
                         </Marker>
                     );
                 })}
             </MapView>
             <Carousel
-                ref = {carouselRef}
+                ref={carouselRef}
                 style={styles.Carousel}
                 loop={true}
                 width={width}
@@ -273,9 +296,9 @@ const styles = StyleSheet.create({
         // backgroundColor: '#000000',
         alignItems: 'center',
         flex: 1,
-        height: Dimensions.get('window').height / 23,
-        width: Dimensions.get('window').height / 23,
-        borderRadius: Dimensions.get('window').height / 46,
+        height: Dimensions.get('window').height / 14,
+        width: Dimensions.get('window').height / 14,
+        borderRadius: Dimensions.get('window').height / 28,
         overflow: 'hidden',
         resizeMode: 'cover',
     },
