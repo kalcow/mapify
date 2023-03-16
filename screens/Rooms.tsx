@@ -27,17 +27,17 @@ const Rooms = (props: Room_Props) => {
     const [roomName, setName] = useState('');
     const [numRooms, setNumRooms] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
-    const [joinCode, setJoinCode] = useState('Enter Room Code');
+    const [joinCode, setJoinCode] = useState('Create Room First!');
 
     const callApi = async () => {
         setText('loading...');
         try {
-            const response = await fetch('http://localhost:8080/createCode', {
+            const response = await fetch('https://mapify-server.fly.dev/createCode', {
                 method: 'POST',
             });
             const json = await response.json();
             console.log(json.code, json.value);
-            setText(json.code);
+            // setText(json.code);
         } catch (error) {
             console.error(error);
         }
@@ -47,7 +47,7 @@ const Rooms = (props: Room_Props) => {
         const roomName = text;
         const refreshToken = await AsyncStorage.getItem('@spotify_refresh_token');
         try {
-            const response = await fetch('http://localhost:8080/createCode', {
+            const response = await fetch('https://mapify-server.fly.dev/createCode', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,6 +55,7 @@ const Rooms = (props: Room_Props) => {
                 body: JSON.stringify({ room_name: roomName, refresh_token: refreshToken }),
             });
             const json = await response.json();
+            setJoinCode(json.code);
             console.log(json);
         } catch (error) {
             console.error(error);
@@ -76,6 +77,9 @@ const Rooms = (props: Room_Props) => {
             <Text style={{ color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25 }}>
                 Rooms
             </Text>
+            <TouchableOpacity>
+                <Text style={{ color: 'white' }}>Join Room Here </Text>
+            </TouchableOpacity>
             <TouchableOpacity
                 style={{
                     backgroundColor: 'grey',
@@ -89,7 +93,7 @@ const Rooms = (props: Room_Props) => {
                 <Text>+</Text>
             </TouchableOpacity>
             <View style={{ alignItems: 'center' }}>
-                <TextInput onChangeText={setJoinCode}></TextInput>
+                {/* <TextInput onChangeText={setJoinCode}></TextInput> */}
                 <View
                     style={{
                         height: 3 * Dimensions.get('window').height * 0.2 + 60,
@@ -147,6 +151,7 @@ const Rooms = (props: Room_Props) => {
                                 </Text>
                             </TouchableOpacity>
                         </View>
+                        <Text style={{ color: 'white' }}>Your code is {joinCode}</Text>
                     </View>
                 </Modal>
                 <TouchableOpacity
