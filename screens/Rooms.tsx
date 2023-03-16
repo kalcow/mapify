@@ -30,8 +30,8 @@ const Rooms = (props: Room_Props) => {
     const [numRooms, setNumRooms] = useState(0);
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [joinedModalVisible, setJoinedModalVisible] = useState(false);
-    const [joinCode, setJoinCode] = useState("")
-    const [userJoinCode, setUserJoinCode] = useState("")
+    const [joinCode, setJoinCode] = useState('');
+    const [userJoinCode, setUserJoinCode] = useState('');
     useEffect(() => {
         const addKey = async () => {
             const { data, error } = await supabase.from('Rooms').insert([
@@ -40,12 +40,12 @@ const Rooms = (props: Room_Props) => {
                     current_users: 345,
                 },
             ]);
-        }
-    })
+        };
+    });
     const callApi = async () => {
         setText('loading...');
         try {
-            const response = await fetch('https://mapify-server.fly.dev/createCode', {
+            const response = await fetch('http://localhost:8080/createCode', {
                 method: 'POST',
             });
             const json = await response.json();
@@ -60,8 +60,8 @@ const Rooms = (props: Room_Props) => {
         const roomName = text;
         const refreshToken = await AsyncStorage.getItem('@spotify_refresh_token');
         try {
-            console.log(roomName, refreshToken)
-            const response = await fetch('https://mapify-server.fly.dev/createCode', {
+            console.log(roomName, refreshToken);
+            const response = await fetch('http://localhost:8080/createCode', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,19 +76,23 @@ const Rooms = (props: Room_Props) => {
         //setCreateModalVisible(!createModalVisible)
     };
 
-    const joinRoom = async() => {
-        console.log(userJoinCode)
+    const joinRoom = async () => {
+        console.log(userJoinCode);
+        const jsoncode = { code: userJoinCode };
         try {
-            const response = await fetch('https://mapify-server.fly.dev/roomCode', {
+            const response = await fetch('http://localhost:8080/roomCode', {
                 method: 'POST',
-                body: JSON.stringify({ code: userJoinCode }),
-            })
-            const json = await JSON.stringify(response)
-            console.log(json)
-        } catch (error){
-            console.error(error)
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsoncode),
+            });
+            const json = await response.json();
+            console.log(json[0].code, json[0].current_access_token.access_token);
+        } catch (error) {
+            console.error(error);
         }
-    }
+    };
 
     useEffect(() => {
         console.log(text);
@@ -102,30 +106,45 @@ const Rooms = (props: Room_Props) => {
                 backgroundColor: '#08080A',
                 flexDirection: 'column',
             }}>
-            <Text style={{color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25}}>Rooms</Text>
-            <View style={{alignItems: 'center',}}>
+            <Text style={{ color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25 }}>
+                Rooms
+            </Text>
+            <View style={{ alignItems: 'center' }}>
                 <View
-                    style={{display: 'flex', flexDirection: "row", justifyContent: "space-between", width: Dimensions.get('window').width * .85}}
-                >
-                    <TextInput 
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: Dimensions.get('window').width * 0.85,
+                    }}>
+                    <TextInput
                         onChangeText={setUserJoinCode}
                         value={userJoinCode}
-                        style={{paddingLeft: 25, backgroundColor: 'white', borderRadius: 10, 
-                                width: Dimensions.get('window').width * .7, height: Dimensions.get('window').width * .10,
-                                fontSize: 20}}
-                    >
-                    </TextInput>
+                        style={{
+                            paddingLeft: 25,
+                            backgroundColor: 'white',
+                            borderRadius: 10,
+                            width: Dimensions.get('window').width * 0.7,
+                            height: Dimensions.get('window').width * 0.1,
+                            fontSize: 20,
+                        }}></TextInput>
                     <TouchableOpacity
                         onPress={joinRoom}
-                        style={{backgroundColor: "white", borderRadius: 10, width: Dimensions.get('window').width * .125, justifyContent: "center"}}
-                    >
-                        <Text style={{fontSize: 20, textAlign: "center"}}>
-                            Join
-                        </Text>
+                        style={{
+                            backgroundColor: 'white',
+                            borderRadius: 10,
+                            width: Dimensions.get('window').width * 0.125,
+                            justifyContent: 'center',
+                        }}>
+                        <Text style={{ fontSize: 20, textAlign: 'center' }}>Join</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{height: 3 * Dimensions.get('window').height * .2 + 60, overflow: "hidden"}}>
-                    <FlatList 
+                <View
+                    style={{
+                        height: 3 * Dimensions.get('window').height * 0.2 + 60,
+                        overflow: 'hidden',
+                    }}>
+                    <FlatList
                         data={[<Card></Card>, <Card></Card>, <Card></Card>, <Card></Card>]}
                         renderItem={({ item }) => item}
                     />
@@ -159,12 +178,22 @@ const Rooms = (props: Room_Props) => {
                             Create a Room
                         </Text>
                         <TextInput
-                            style={{paddingLeft: 25, backgroundColor: 'white', borderRadius: 10, 
-                            width: Dimensions.get('window').width * .9, height: Dimensions.get('window').width * .10,
-                            fontSize: 20}}
+                            style={{
+                                paddingLeft: 25,
+                                backgroundColor: 'white',
+                                borderRadius: 10,
+                                width: Dimensions.get('window').width * 0.9,
+                                height: Dimensions.get('window').width * 0.1,
+                                fontSize: 20,
+                            }}
                             onChangeText={setText}
                         />
-                        <View style={{ alignItems: 'center',height: Dimensions.get('window').height * .80, position: 'relative' }}>
+                        <View
+                            style={{
+                                alignItems: 'center',
+                                height: Dimensions.get('window').height * 0.8,
+                                position: 'relative',
+                            }}>
                             <TouchableOpacity
                                 style={{
                                     padding: 10,
@@ -252,4 +281,4 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
 });
-export default Rooms
+export default Rooms;
