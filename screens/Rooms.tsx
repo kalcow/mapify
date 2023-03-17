@@ -27,7 +27,7 @@ type Room_Props = {};
 const Rooms = (props: Room_Props) => {
     const u = useUserState();
     const [text, setText] = useState('+');
-    const [roomName, setName] = useState('');
+    const [roomName, setRoomName] = useState('');
     const [numRooms, setNumRooms] = useState(0);
     const [createModalVisible, setCreateModalVisible] = useState(false);
     const [joinedModalVisible, setJoinedModalVisible] = useState(false);
@@ -71,29 +71,36 @@ const Rooms = (props: Room_Props) => {
                 body: JSON.stringify({ room_name: roomName, refresh_token: refreshToken }),
             });
             const json = await response.json();
+            console.log('hi')
             setJoinCode(json.code);
+            setRoomName(text)
+            setCreateModalVisible(!createModalVisible)
+            setJoinedModalVisible(!joinedModalVisible)
         } catch (error) {
             console.error(error);
         }
-        //setCreateModalVisible(!createModalVisible)
     };
 
     const joinRoom = async () => {
-        console.log(userJoinCode);
-        const jsoncode = { code: userJoinCode };
-        try {
-            const response = await fetch('http://localhost:8080/roomCode', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(jsoncode),
-            });
-            const json = await response.json();
-            console.log(json[0].code, json[0].current_access_token.access_token);
-            setToken(json[0].current_access_token.access_token);
-        } catch (error) {
-            console.error(error);
+        if (userJoinCode != ''){
+            const jsoncode = { code: userJoinCode };
+            try {
+                const response = await fetch('http://localhost:8080/roomCode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(jsoncode),
+                });
+                const json = await response.json();
+                console.log(json[0].code, json[0].current_access_token.access_token);
+                setToken(json[0].current_access_token.access_token);
+                setRoomName(json[0].room_name)
+                setJoinCode(userJoinCode)
+                setJoinedModalVisible(!joinedModalVisible)
+            } catch (error) {
+                console.error(error);
+            }
         }
     };
 
@@ -236,7 +243,8 @@ const Rooms = (props: Room_Props) => {
                     onRequestClose={() => {
                         setCreateModalVisible(!createModalVisible);
                     }}
-                    transparent={false}>
+                    transparent={false}
+                >
                     <View
                         style={{
                             paddingTop: 70,
@@ -292,7 +300,45 @@ const Rooms = (props: Room_Props) => {
                                     Create
                                 </Satoshi.Regular>
                             </TouchableOpacity>
-                            <Text style={{ color: 'white' }}>Your code is {joinCode}</Text>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Modal
+                    visible={joinedModalVisible}
+                    animationType='slide'
+                    onRequestClose={() => setJoinedModalVisible(!joinedModalVisible)}
+                    transparent={false}
+                >
+                    <View
+                        style={{
+                            paddingTop: 70,
+                            backgroundColor: '#08080A',
+                            height: Dimensions.get('window').height,
+                            paddingLeft: 15,
+                        }}>
+                        <TouchableOpacity
+                            style={{
+                                padding: 10,
+                                borderRadius: 7,
+                            }}
+                            onPress={() => {
+                                setJoinedModalVisible(!joinedModalVisible);
+                            }}>
+                            <Text style={{ color: 'white', fontSize: 30 }}>{'<'}</Text>
+                        </TouchableOpacity>
+                        <View style={{alignItems: 'center', height: Dimensions.get('window').height * .8}}>
+                            <View style={{alignItems: 'center', paddingBottom: 25}}>
+                                <Text style={{color: 'white', fontSize: 30}}>{roomName}</Text>
+                                <Text style={{ color: 'white' }}>{joinCode}</Text>
+                            </View>
+                            <Image style={{width: 300, height: 300, borderColor: '#FF800A', borderRadius: 20, borderWidth: 5}} source={{
+                                        uri: 'https://cdn.vox-cdn.com/thumbor/WR9hE8wvdM4hfHysXitls9_bCZI=/0x0:1192x795/1400x1400/filters:focal(596x398:597x399)/cdn.vox-cdn.com/uploads/chorus_asset/file/22312759/rickroll_4k.jpg'
+                                    }}
+                            ></Image>
+                            <TouchableOpacity style={{borderWidth: 2, width: Dimensions.get('window').width * .8, borderColor: 'white', borderRadius: 20, top: Dimensions.get('window').height *.02, alignItems: 'center'}}onPress={rickRoll}>
+                                <Text style={{ color: 'white', fontSize: 30, fontStyle: 'italic'}}>RICKROLL</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </Modal>
