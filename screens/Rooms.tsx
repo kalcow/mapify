@@ -2,6 +2,7 @@ import { getAccessToken } from '../lib/spotify';
 import { supabase } from '../supabase/supabase';
 import { useUserState } from '../context/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Satoshi from '../constants/Satoshi';
 
 import {
     View,
@@ -61,7 +62,7 @@ const Rooms = (props: Room_Props) => {
         const roomName = text;
         const refreshToken = await AsyncStorage.getItem('@spotify_refresh_token');
         try {
-            console.log(roomName, refreshToken)
+            console.log(roomName, refreshToken);
             const response = await fetch('http://localhost:8080/createCode', {
                 method: 'POST',
                 headers: {
@@ -121,19 +122,30 @@ const Rooms = (props: Room_Props) => {
             style={{
                 flex: 1,
                 paddingTop: 70,
-                paddingLeft: Dimensions.get('window').width * .05,
-                backgroundColor: '#08080A',
+                paddingLeft: Dimensions.get('window').width * 0.05,
+                backgroundColor: '#1D1E24',
                 flexDirection: 'column',
-                position: 'absolute'
+                // position: 'absolute',
             }}>
-            <Text style={{color: 'white', fontSize: 30, alignItems: 'baseline', paddingLeft: 25}}>Rooms</Text>
-            <View style={{alignItems: 'center'}}>
+            <Satoshi.Regular
+                style={{
+                    color: 'white',
+                    fontSize: 30,
+                    alignItems: 'baseline',
+                    paddingLeft: 25,
+                    marginBottom: 10,
+                }}>
+                Rooms
+            </Satoshi.Regular>
+            <View style={{ alignItems: 'center' }}>
                 <View
                     style={{
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         width: Dimensions.get('window').width * 0.85,
+                        marginRight: 20,
+                        marginBottom: 10,
                     }}>
                     <TextInput
                         onChangeText={setUserJoinCode}
@@ -146,26 +158,55 @@ const Rooms = (props: Room_Props) => {
                             height: Dimensions.get('window').width * 0.1,
                             fontSize: 20,
                         }}></TextInput>
-                    <View style={{flexDirection: 'column'}}>
+                    <View style={{ flexDirection: 'column' }}>
                         <TouchableOpacity
                             onPress={joinRoom}
                             style={{
                                 backgroundColor: 'white',
                                 borderRadius: 10,
-                                width: Dimensions.get('window').width * 0.125,
+                                width: Dimensions.get('window').width * 0.15,
+                                height: Dimensions.get('window').height * 0.045,
                                 justifyContent: 'center',
                             }}>
-                            <Text style={{ fontSize: 20, textAlign: 'center' }}>Join</Text>
+                            <Satoshi.Regular style={{ fontSize: 20, textAlign: 'center' }}>
+                                Join
+                            </Satoshi.Regular>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{borderWidth: 1, borderColor: 'white', borderRadius: 20 }}onPress={rickRoll}>
+                        {/* <TouchableOpacity
+                            style={{ borderWidth: 1, borderColor: 'white', borderRadius: 20 }}
+                            onPress={rickRoll}>
                             <Text style={{ color: 'white' }}>RICKROLL</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 </View>
-                <View style={{height: 3 * Dimensions.get('window').height * .2 + 60, overflow: "hidden", zIndex: 1}}>
-                    <FlatList 
-                        data={[<Card></Card>, <Card></Card>, <Card></Card>, <Card></Card>]}
+                <View
+                    style={{
+                        height: 3 * Dimensions.get('window').height * 0.2 + 60,
+                        paddingRight: 25,
+                        overflow: 'hidden',
+                        zIndex: 1,
+                    }}>
+                    <FlatList
+                        data={[
+                            <Card
+                                room_name="Our First Room!"
+                                icon="https://upload.wikimedia.org/wikipedia/en/a/a0/Blonde_-_Frank_Ocean.jpeg"
+                                song_name="Pink + White"></Card>,
+                            <Card
+                                room_name="Night Drives"
+                                icon="https://i.scdn.co/image/ab67616d0000b273382514f0114ba8f4a16d5db4"
+                                song_name="Boom Boom Pow"></Card>,
+                            <Card
+                                room_name="Study Time"
+                                icon="https://storage.halidonmusic.com/images/classica%20digitale%20(3)_260520_113110.jpg"
+                                song_name="Fantasie-impromptu"></Card>,
+                            <Card
+                                room_name="My Jamz"
+                                icon="https://images.genius.com/60ce32e0db63d318bb978d5c5cd4678f.1000x1000x1.png"
+                                song_name="2 soon"></Card>,
+                        ]}
                         renderItem={({ item }) => item}
+                        showsVerticalScrollIndicator={false}
                     />
                 </View>
                 <TouchableOpacity
@@ -178,17 +219,16 @@ const Rooms = (props: Room_Props) => {
                         position: 'relative',
                         width: 60,
                         height: 60,
-                        bottom: Dimensions.get('window').height * .1,
-                        left: Dimensions.get('window').width * .35
+                        bottom: Dimensions.get('window').height * 0.1,
+                        left: Dimensions.get('window').width * 0.35,
                     }}
                     onPress={() => {
                         setCreateModalVisible(!createModalVisible);
                     }}>
-                    <Text style={{fontSize: 25, textAlign: 'center', paddingTop: 3}}>
+                    <Satoshi.Regular style={{ fontSize: 25, textAlign: 'center', paddingTop: 3 }}>
                         +
-                    </Text>
+                    </Satoshi.Regular>
                 </TouchableOpacity>
-
 
                 <Modal
                     visible={createModalVisible}
@@ -213,11 +253,13 @@ const Rooms = (props: Room_Props) => {
                             onPress={() => {
                                 setCreateModalVisible(!createModalVisible);
                             }}>
-                            <Text style={{ color: 'white', fontSize: 30 }}>{'<'}</Text>
+                            <Satoshi.Regular style={{ color: 'white', fontSize: 30 }}>
+                                {'<'}
+                            </Satoshi.Regular>
                         </TouchableOpacity>
-                        <Text style={{ color: 'white', fontSize: 30, paddingLeft: 20 }}>
+                        <Satoshi.Regular style={{ color: 'white', fontSize: 30, paddingLeft: 20 }}>
                             Create a Room
-                        </Text>
+                        </Satoshi.Regular>
                         <TextInput
                             style={{
                                 paddingLeft: 25,
@@ -245,10 +287,10 @@ const Rooms = (props: Room_Props) => {
                                     bottom: 50,
                                 }}
                                 onPress={createRoom}>
-                                <Text
+                                <Satoshi.Regular
                                     style={{ color: '#08080A', fontSize: 20, textAlign: 'center' }}>
                                     Create
-                                </Text>
+                                </Satoshi.Regular>
                             </TouchableOpacity>
                             <Text style={{ color: 'white' }}>Your code is {joinCode}</Text>
                         </View>
@@ -259,28 +301,61 @@ const Rooms = (props: Room_Props) => {
     );
 };
 
-type Card_Props = {};
+type Card_Props = { room_name: string; icon: string; song_name: string };
 
 const Card = (props: Card_Props) => {
     // This is placeholder name; will pass in props for the name at later point
-    const name = 'Room name';
-    const icon = require('../assets/favicon.png');
-    const song_name_temp = 'Die For You';
+    const name = props.room_name;
+    const song_name_temp = props.song_name;
+    const userphoto = require('../assets/users.png');
     return (
-        <View style={{ paddingVertical: 10 }}>
+        <View style={{ paddingVertical: 5 }}>
             <View style={styles.roomCard}>
+                <Image
+                    source={userphoto}
+                    style={{
+                        width: 110,
+                        height: 50,
+                        position: 'absolute',
+                        right: 20,
+                        top: 10,
+                    }}></Image>
                 <View>
-                    <Text style={styles.title}>{name}</Text>
-                    <Text style={styles.subheading}>User-name</Text>
+                    <Satoshi.Medium style={styles.title}>{name}</Satoshi.Medium>
+                    {/* <Text style={styles.subheading}>User-name</Text> */}
                 </View>
-                <View style={{flexDirection: 'row', display: 'flex'}}>
-                    <Image source={icon} style={{width: 50, height: 50}}/>
-                    <View>
-                        <Text style={{ color: 'white' }}>Currently Playing</Text>
-                        <Text style={{ color: 'white' }}>{song_name_temp}</Text>
-                    </View>
-                    <View>
-                        <Text style={{ color: 'white' }}>temp tag holder</Text>
+                <View style={{ flexDirection: 'row', display: 'flex' }}>
+                    <Image
+                        source={{
+                            uri: props.icon,
+                        }}
+                        style={{
+                            width: 100,
+                            height: 100,
+                            borderRadius: 8,
+                            marginTop: 10,
+                            marginRight: 15,
+                        }}
+                    />
+                    <View
+                        style={{
+                            display: 'flex',
+                            marginTop: 20,
+                            marginLeft: 10,
+                        }}>
+                        <Satoshi.Regular
+                            style={{ color: 'white', fontWeight: '500', fontSize: 12 }}>
+                            Currently Playing
+                        </Satoshi.Regular>
+                        <Satoshi.Regular
+                            style={{
+                                color: 'white',
+                                fontWeight: '500',
+                                fontSize: 22,
+                                marginTop: 5,
+                            }}>
+                            {song_name_temp}
+                        </Satoshi.Regular>
                     </View>
                 </View>
             </View>
@@ -290,19 +365,22 @@ const Card = (props: Card_Props) => {
 
 const styles = StyleSheet.create({
     roomCard: {
-        backgroundColor: '#1D1E24',
+        backgroundColor: '#08080A',
         width: Dimensions.get('window').width * 0.9,
-        height: Dimensions.get('window').height * 0.2,
+        height: Dimensions.get('window').height * 0.19,
         borderRadius: 20,
-        padding: 25,
+        paddingTop: 15,
+        paddingRight: 25,
+        paddingBottom: 25,
+        paddingLeft: 25,
     },
     title: {
-        fontFamily: 'Arial',
+        fontFamily: 'Satoshi',
         fontSize: 25,
         color: 'white',
     },
     subheading: {
-        fontFamily: 'Arial',
+        fontFamily: 'Satoshi',
         fontSize: 17,
         color: 'white',
     },
