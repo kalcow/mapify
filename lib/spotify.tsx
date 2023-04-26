@@ -40,7 +40,6 @@ const putSpotifyData = async (endpoint: string, access_token: string) => {
 };
 
 const postSpotifyData = async (endpoint: string, access_token: string) => {
-
     const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
@@ -66,6 +65,63 @@ const SpotifyActions = {
         const response = await putSpotifyData(ENDPOINT, accessToken);
         return response;
     },
+    playSong: async (token: string, uri: string) => {
+        const ENDPOINT = `https://api.spotify.com/v1/me/player/play`;
+        const data = { context_uri: uri };
+        const r = await fetch(ENDPOINT, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return r;
+    },
+    playTrack: async (token: string, uri: string) => {
+        const ENDPOINT = `https://api.spotify.com/v1/me/player/play`;
+        var arr = [];
+        arr.push(uri);
+        const data = { uris: arr };
+        const r = await fetch(ENDPOINT, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return r;
+    },
+
+    getAlbumSongs: async (token: string, album_id: string) => {
+        //console.log(token);
+        const idlink = JSON.stringify(album_id.URI).replace(/['"]+/g, '');
+
+        const ENDPOINT = `https://api.spotify.com/v1/albums/${idlink}/tracks`;
+
+        const r = await fetch(ENDPOINT, {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                //console.log('DATA: ', data);
+                return data;
+            })
+            .catch((error) => {
+                return error;
+            });
+
+        return r;
+    },
+
     skipForward: async (token: string) => {
         const ENDPOINT = 'https://api.spotify.com/v1/me/player/next';
         const accessToken = token;
@@ -83,7 +139,7 @@ const SpotifyActions = {
         const accessToken = token;
         const response = await putSpotifyData(ENDPOINT, accessToken);
         return response;
-    }
+    },
 };
 
 export default SpotifyActions;

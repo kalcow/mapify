@@ -16,9 +16,11 @@ import Colors from '../constants/colors';
 //* Screens
 import Home from '../screens/Home';
 import Map from '../screens/Map';
-import Library from '../screens/Library';
+import Library from '../screens/library/Library';
 import Discover from '../screens/Discover';
 import Rooms from '../screens/Rooms';
+
+import LibraryFlow from './LibraryFlow';
 
 //* Imports for Types
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs/lib/typescript/src/types';
@@ -29,8 +31,8 @@ const TabData = [
     { route: 'Map', label: 'Map', icon: BottomTabIcons.Map, component: Map },
     { route: 'Discover', label: 'Discover', icon: BottomTabIcons.Compass, component: Discover },
     { route: 'Home', label: 'Home', icon: BottomTabIcons.Home, component: Home },
-    { route: 'Library', label: 'Library', icon: BottomTabIcons.Library, component: Library },
-    { route: 'Rooms', label: 'Rooms', icon: BottomTabIcons.Rooms, component: Rooms },
+    { route: 'Library', label: 'Library', icon: BottomTabIcons.Library, component: LibraryFlow },
+    { route: 'Rooms', label: 'Rooms', icon: BottomTabIcons.Rooms, component: Library },
 ];
 
 const Tabs = createBottomTabNavigator();
