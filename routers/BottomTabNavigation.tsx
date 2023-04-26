@@ -18,6 +18,7 @@ import Home from '../screens/Home';
 import Map from '../screens/Map';
 import Library from '../screens/library/Library';
 import Discover from '../screens/Discover';
+import Rooms from '../screens/Rooms';
 
 import LibraryFlow from './LibraryFlow';
 

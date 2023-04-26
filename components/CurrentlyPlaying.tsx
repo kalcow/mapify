@@ -25,7 +25,7 @@ import { Slider } from '@miblanchard/react-native-slider';
 import ImageColors from 'react-native-image-colors';
 
 //!development
-import isExpoGo from '../lib/isExpoGo';
+import isExpoGo, { isAndroid } from '../lib/isExpoGo';
 import Spinner from './Spinner';
 
 const API_ENDPOINT = 'https://mapify-server.fly.dev/player';
@@ -88,7 +88,6 @@ const CurrentlyPlayingModal: FC<CurrentlyPlayingModal> = ({
             setSliding(false);
         }
     }, [percentDuration]);
-
     const animatedSensor = useAnimatedSensor(SensorType.ROTATION, {
         interval: 10,
     });
