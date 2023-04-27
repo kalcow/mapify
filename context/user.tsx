@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Session } from '@supabase/supabase-js';
-import { createContext, FC, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, FC, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { Modalize } from 'react-native-modalize';
+import { IHandles } from 'react-native-modalize/lib/options';
 import { useAuthState } from '../hooks/useAuthState';
 import { getAccessToken } from '../lib/spotify';
 
@@ -15,6 +17,9 @@ interface UserState {
     accessToken: {
         spotify: string;
     };
+    currentlyPlayingModal?: {
+        ref: React.RefObject<IHandles>;
+    }
 }
 
 interface UserWrapper {
@@ -33,6 +38,7 @@ const UserWrapper: FC<UserWrapper> = ({ children }) => {
     const [refreshToken, setRefreshToken] = useState<string>('');
     const [accessToken, setAccessToken] = useState<string>('');
     const authState = useAuthState();
+    const modalizeRef = useRef<Modalize>(null);
 
     async function getSpotifyRefreshToken() {
         setLoading(true);
@@ -67,6 +73,8 @@ const UserWrapper: FC<UserWrapper> = ({ children }) => {
         setSession(JSON.parse(sessionStr));
     };
 
+    
+
     return (
         <>
             <UserState.Provider
@@ -81,6 +89,9 @@ const UserWrapper: FC<UserWrapper> = ({ children }) => {
                     accessToken: {
                         spotify: accessToken,
                     },
+                    currentlyPlayingModal: {
+                        ref: modalizeRef, 
+                    }
                 }}>
                 {children}
             </UserState.Provider>
