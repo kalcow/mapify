@@ -22,7 +22,7 @@ import { geoGraticule10 } from 'd3-geo';
 // @ts-ignore
 import SimpleTween from 'react-native-simple-tween';
 
-export default function Map() {
+export default function Globe_V1() {
     const onContextCreate = async (gl: any) => {
         const scene = new Scene();
         const camera = new PerspectiveCamera(
@@ -59,7 +59,9 @@ export default function Map() {
             require('../assets/Textures/Earth_clouds.jpeg')
         );
 
-        const globeTexture = await ExpoTHREE.loadAsync(require('../assets/Textures/Earth_Texture.png'));
+        const globeTexture = await ExpoTHREE.loadAsync(
+            require('../assets/Textures/Earth_Texture.png')
+        );
 
         const earth = new Mesh(
             new SphereGeometry(5, 50, 50),
@@ -123,22 +125,22 @@ export default function Map() {
         scene.add(point);
 
         // @ts-ignore
-        scene.rotation.x = ((lat * Math.PI) / 180);
-        // scene.rotation.x = 0; 
+        // scene.rotation.x = ((lat * Math.PI) / 180);
+        // scene.rotation.x = 0;
         // @ts-ignore
         // let goalY = -((long * Math.PI) / 180);
         // let goalX = (lat * Math.PI) / 180;
-        scene.rotation.y = -((long * Math.PI) / 180);
-        // scene.rotation.y = 0; 
+        // scene.rotation.y = -((long * Math.PI) / 180);
+        // scene.rotation.y = 0;
 
         const from = {
             z: 10,
-            x: 0, 
-            y: 0, 
+            x: 0,
+            y: 0,
         };
         const to = {
             z: 8,
-            x: ((lat * Math.PI) / 180),
+            x: (lat * Math.PI) / 180,
             y: -((long * Math.PI) / 180) - 0.2,
         };
 
@@ -146,7 +148,9 @@ export default function Map() {
         tween.setDuration(2000);
         tween.setEasing(SimpleTween.Easing.Quadratic.InOut);
 
-        tween.start()
+        tween.start();
+
+
 
         const render = () => {
             requestAnimationFrame(render);
@@ -158,8 +162,10 @@ export default function Map() {
                 // @ts-ignore
                 scene.rotation.x = values.x;
                 // @ts-ignore
-                scene.rotation.y = values.y; 
+                scene.rotation.y = values.y;
             });
+
+            
 
             // @ts-ignore
             clouds.rotation.y += 0.0001;
