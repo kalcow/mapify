@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import BottomTabNavigation from './BottomTabNavigation';
 import Login from '../screens/onboarding/Login';
+import CreateAccount from '../screens/onboarding/CreateAccount';
 import SwipeableBottomTabNavigation from './SwipeableBottomTabNavigation';
 import { supabase } from '../supabase/supabase';
 import { useState } from 'react';
@@ -52,7 +53,8 @@ const InitialFlow = () => {
                             headerShown: false,
                         }}
                         initialRouteName={initialRoute}>
-                        <Stack.Screen name="Login" component={Login} />
+                        <Stack.Screen name="Login" component={Login}/>
+                        <Stack.Screen name="CreateAccount" component={CreateAccount}/>
                         <Stack.Screen
                             name="HomeTabs"
                             component={

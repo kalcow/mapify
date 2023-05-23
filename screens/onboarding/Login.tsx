@@ -12,6 +12,7 @@ import { useUserState } from '../../context/user';
 import { useAuthState } from '../../hooks/useAuthState';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import isExpoGo from '../../lib/isExpoGo';
+import { TextInput } from 'react-native-gesture-handler';
 
 type Props = {};
 
@@ -47,17 +48,17 @@ const Login = (props: Props) => {
         };
 
         const authUrl = (await supabase.auth.signInWithOAuth(signInParameters)).data.url;
-        console.log(authUrl)
+        console.log(authUrl);
 
         if (authUrl !== null) {
             //@ts-ignore
             const response = await startAsync({ authUrl, redirectUri });
             if (response.type == 'success') {
-                console.log('success')
+                console.log('success');
                 console.log(response.url);
                 await Linking.openURL(response.url);
             } else {
-                console.log('failed')
+                console.log('failed');
             }
 
             //@ts-ignore
@@ -99,14 +100,38 @@ const Login = (props: Props) => {
 
     return (
         <ScreenWrapper>
-            <Satoshi.Regular style={{ color: 'white' }}>Login</Satoshi.Regular>
-            <Button
-                text="Login with Spotify"
-                onPress={() => {
-                    signInWithSpotify();
-                }}>
-                {/* <Icons.RightArrow /> */}
-            </Button>
+            <Satoshi.Regular
+                style={{ color: 'white', textAlign: 'center', padding: 30, fontSize: 30 }}>
+                Login
+            </Satoshi.Regular>
+            <View style={{ margin: 30, justifyContent: 'center' }}>
+                <TextInput
+                    placeholder="email"
+                    placeholderTextColor="white"
+                    style={{ color: 'white', margin: 10, borderBottomColor: "white"}}
+                />
+                <TextInput
+                    placeholder="password"
+                    placeholderTextColor="white"
+                    style={{ color: 'white', margin: 10,  borderColor: 'white' }}
+                />
+
+                <Button
+                    style={{ margin: 10 }}
+                    text="Login"
+                    onPress={() => {
+                        signInWithSpotify();
+                    }}>
+                    {/* <Icons.RightArrow /> */}
+                </Button>
+                <Button
+                    text="Create Account"
+                    onPress={() => {
+                        navigator.navigate('CreateAccount' as never, {} as never);
+                    }}
+                    style={{ margin: 10}}
+                />
+            </View>
         </ScreenWrapper>
     );
 };
